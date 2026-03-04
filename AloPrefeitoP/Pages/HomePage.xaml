@@ -12,9 +12,11 @@
         RowDefinitions="Auto,*,Auto"
         RowSpacing="0">
 
+        <!--  HEADER (some quando está escutando)  -->
         <VerticalStackLayout
             Grid.Row="0"
             Margin="0,8,0,0"
+            IsVisible="{Binding NaoEstaEscutando}"
             Spacing="4">
             <Label
                 FontSize="16"
@@ -26,8 +28,29 @@
                 TextColor="#1B1B1B" />
         </VerticalStackLayout>
 
-        <Grid Grid.Row="1">
+        <!--  MEIO: transcrição + microfone  -->
+        <Grid
+            Grid.Row="1"
+            RowDefinitions="Auto,*"
+            RowSpacing="18">
+
+            <!--  balão de transcrição (aparece enquanto escuta com "..." e depois com texto)  -->
             <dx:DXBorder
+                Grid.Row="0"
+                Padding="12,10"
+                BackgroundColor="#EAF7F7"
+                CornerRadius="14"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding TemTranscricao}">
+                <Label
+                    FontSize="14"
+                    Text="{Binding TextoTranscricaoUI}"
+                    TextColor="#1B1B1B" />
+            </dx:DXBorder>
+
+            <!--  microfone  -->
+            <dx:DXBorder
+                Grid.Row="1"
                 Padding="0"
                 BackgroundColor="#6D74E6"
                 CornerRadius="85"
@@ -35,37 +58,64 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 WidthRequest="170">
-
-                <dx:DXBorder.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding FalarCommand}" />
-                </dx:DXBorder.GestureRecognizers>
-
                 <Grid>
                     <lottie:SKLottieView
                         HeightRequest="120"
                         HorizontalOptions="Center"
-                        IsAnimationEnabled="True"
+                        IsAnimationEnabled="{Binding EstaEscutando}"
                         RepeatCount="-1"
                         Source="microphone.json"
                         VerticalOptions="Center"
-                        WidthRequest="120" />
+                        WidthRequest="120">
+                        <lottie:SKLottieView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleEscutaCommand}" />
+                        </lottie:SKLottieView.GestureRecognizers>
+                    </lottie:SKLottieView>
                 </Grid>
             </dx:DXBorder>
+
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,0,0,14">
+        <!--  INPUT (some quando está escutando)  -->
+        <Grid
+            Grid.Row="2"
+            Margin="0,0,0,14"
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="10"
+            IsVisible="{Binding NaoEstaEscutando}">
+
             <dx:DXBorder
+                Grid.Column="0"
                 Padding="14,10"
                 BackgroundColor="#E7E7E7"
                 CornerRadius="14">
+
                 <Entry
                     BackgroundColor="Transparent"
                     FontSize="14"
                     Placeholder="Digite sua mensagem..."
                     PlaceholderColor="#6F6F6F"
-                    Text="{Binding TextoFalado}"
+                    Text="{Binding MensagemDigitada}"
                     TextColor="#1B1B1B" />
             </dx:DXBorder>
+
+            <!--  Botãozinho do lado (igual sua bolinha)  -->
+            <dx:DXBorder
+                Grid.Column="1"
+                BackgroundColor="#6D74E6"
+                CornerRadius="20"
+                HeightRequest="40"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                WidthRequest="40">
+                <Label
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    Text="i"
+                    TextColor="White"
+                    VerticalTextAlignment="Center" />
+            </dx:DXBorder>
+
         </Grid>
 
     </Grid>
