@@ -1,4 +1,5 @@
-﻿using AloPrefeitoP.Models;
+﻿
+using AloPrefeitoP.Models;
 using FacilityCareApp.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,14 +8,13 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Xamarin.Google.Crypto.Tink.Shaded.Protobuf;
 
 namespace AloPrefeitoP.Services
 {
     public class ApiServices
     {
         private readonly HttpClient _httpClient;
-        private static string _baseUrl = "";
+        private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/";
         private readonly ILogger<ApiServices> _logger;
         JsonSerializerOptions _serializerOptions;
 
