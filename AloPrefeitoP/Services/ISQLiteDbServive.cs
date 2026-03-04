@@ -10,10 +10,10 @@ namespace AloPrefeitoP.Services
     public interface ISQLiteDbServive
     {
         Task InitializeAsync(); 
-        Task<IEnumerable<Mensagens>> GetDestaques();
+        Task<IEnumerable<Mensagens>> GetMensagem();
         
-        Task<int> AddDestaque(Mensagens mensagen);
-        Task<int> DeleteDestaque(Mensagens destaque);
+        Task<int> AddMensagem(Mensagens mensagen);
+        Task<int> DeleteMensagem(Mensagens destaque);
 
        
     }

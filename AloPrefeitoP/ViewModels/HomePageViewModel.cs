@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui.Media;
+﻿using AloPrefeitoP.Models;
+using AloPrefeitoP.Services;
+using CommunityToolkit.Maui.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Globalization;
@@ -9,6 +11,8 @@ namespace AloPrefeitoP.ViewModels
     {
         private readonly ISpeechToText speechToText;
         private CancellationTokenSource? cts;
+        private readonly ISQLiteDbServive _iSQLiteDbServive;
+        private readonly ApiServices _apiServices;
 
         [ObservableProperty]
         private string textoFalado;
@@ -16,19 +20,34 @@ namespace AloPrefeitoP.ViewModels
         [ObservableProperty]
         private bool estaEscutando;
 
-        public HomePageViewModel()
+        public HomePageViewModel(ISQLiteDbServive iSQLiteDbServive, ApiServices apiServices)
         {
             // pode usar direto sem DI:
             speechToText = SpeechToText.Default;
 
             speechToText.RecognitionResultUpdated += OnUpdated;
             speechToText.RecognitionResultCompleted += OnCompleted;
+            _iSQLiteDbServive = iSQLiteDbServive;
+            _apiServices = apiServices;
         }
 
-        private void OnUpdated(object? sender, SpeechToTextRecognitionResultUpdatedEventArgs e)
+        private async void OnUpdated(object? sender, SpeechToTextRecognitionResultUpdatedEventArgs e)
         {
             // parcial (enquanto fala)
             TextoFalado = e.RecognitionResult;
+            var fala = new Mensagens
+            {
+                Nome = Preferences.Get("usuarionome", string.Empty),
+                Mensagem = TextoFalado,
+                Data = DateTime.Now
+
+            };
+            int id = Preferences.Get("usuarioid", 0);
+          var response =  await _apiServices.GetRespostaAgentContexto(TextoFalado, id); // ENVIA PARA API A CADA ATUALIZAÇÃO PARCIAL
+            await _iSQLiteDbServive.AddMensagem(fala); // SALVA NO SQLITE A CADA ATUALIZAÇÃO PARCIAL
+            await _iSQLiteDbServive.GetMensagem(); // TRAS TODAS AS MENSAGENS DO SQLITE 
+
+
         }
 
         private void OnCompleted(object? sender, SpeechToTextRecognitionResultCompletedEventArgs e)

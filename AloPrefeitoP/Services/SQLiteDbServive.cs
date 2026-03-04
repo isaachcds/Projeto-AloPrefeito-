@@ -36,16 +36,16 @@ namespace ScheduleListUI.Services
                 Console.WriteLine(ex);
             }
         }
-        public async Task<int> AddDestaque(Mensagens mensagen)
+        public async Task<int> AddMensagem(Mensagens mensagen)
         {
            return await _dbConnection.InsertAsync(mensagen);
         }
 
-        public async Task<int> DeleteDestaque(Mensagens mensagen)
+        public async Task<int> DeleteMensagem(Mensagens mensagen)
         {
             return await _dbConnection.DeleteAsync(mensagen);
         }
-        public async Task<IEnumerable<Mensagens>> GetDestaques()
+        public async Task<IEnumerable<Mensagens>> GetMensagem()
         {
             return await _dbConnection.Table<Mensagens>().ToListAsync();
         }
