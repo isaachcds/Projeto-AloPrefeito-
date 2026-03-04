@@ -33,7 +33,7 @@ namespace AloPrefeitoP.ViewModels
         // Balão aparece quando está escutando OU já tem texto transcrito
         public bool TemTranscricao => EstaEscutando || !string.IsNullOrWhiteSpace(TextoFalado);
 
-        public HomePageViewModel()
+        public HomePageViewModel(/*ApiServices apiServices, ISQLiteDbServive sQLiteDbServive*/)
         {
             speechToText = SpeechToText.Default;
 
@@ -56,6 +56,9 @@ namespace AloPrefeitoP.ViewModels
                     FinalizarEscutaUI();
                 });
             };
+
+            //_apiServices = apiServices;
+            //_iSQLiteDbServive = sQLiteDbServive;
         }
 
         partial void OnEstaEscutandoChanged(bool value)
@@ -141,5 +144,23 @@ namespace AloPrefeitoP.ViewModels
             cts?.Dispose();
             cts = null;
         }
+
+
+
+        // EXEMPLO DE USO: a cada atualização parcial do texto falado, salva no SQLite e envia para API 
+
+        //  var fala = new Mensagens
+        //  {
+        //      Nome = Preferences.Get("usuarionome", string.Empty),
+        //      Mensagem = TextoFalado,
+        //      Data = DateTime.Now
+
+        //  };
+        //  int id = Preferences.Get("usuarioid", 0);
+        //var response =  await _apiServices.GetRespostaAgentContexto(TextoFalado, id); // ENVIA PARA API A CADA ATUALIZAÇÃO PARCIAL
+        //  await _iSQLiteDbServive.InitializeAsync(); // GARANTE QUE O SQLITE ESTEJA PRONTO
+
+        //  await _iSQLiteDbServive.AddMensagem(fala); // SALVA NO SQLITE A CADA ATUALIZAÇÃO PARCIAL
+        //  await _iSQLiteDbServive.GetMensagem(); // TRAS TODAS AS MENSAGENS DO SQLITE 
     }
 }
