@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Maui;
+﻿using AloPrefeitoP.Pages;
+using AloPrefeitoP.Services;
+using CommunityToolkit.Maui;
 using DevExpress.Maui;
-using SkiaSharp.Views.Maui.Controls.Hosting;
 using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace AloPrefeitoP
 {
@@ -23,7 +25,8 @@ namespace AloPrefeitoP
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Services.AddSingleton<ApiServices>();
+            builder.Logging.AddDebug();
             builder.UseSkiaSharp();
 #endif
 

@@ -11,7 +11,7 @@ public partial class LoginPage : ContentPage
 	{
 		InitializeComponent();
         BindingContext = new LoginPageViewModel();
-        _apiServices = apiServices;
+       _apiServices = apiServices;
 
     }
 
@@ -28,13 +28,13 @@ public partial class LoginPage : ContentPage
 
         if (string.IsNullOrEmpty(EntEmail.Text))
         {
-           
+
             await DisplayAlert("Erro", "Informe o email", "Cancelar");
             return;
         }
         if (string.IsNullOrEmpty(EntSenha.Text))
         {
-            
+
             await DisplayAlert("Erro", "Informe o senha", "Cancelar");
             return;
         }
