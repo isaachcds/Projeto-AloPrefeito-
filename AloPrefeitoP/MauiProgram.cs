@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using DevExpress.Maui;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace AloPrefeitoP
@@ -13,6 +14,7 @@ namespace AloPrefeitoP
                 .UseMauiApp<App>()
                 .UseDevExpress()
                 .UseDevExpressControls()
+                .UseSkiaSharp()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
@@ -22,6 +24,7 @@ namespace AloPrefeitoP
 
 #if DEBUG
     		builder.Logging.AddDebug();
+            builder.UseSkiaSharp();
 #endif
 
             return builder.Build();

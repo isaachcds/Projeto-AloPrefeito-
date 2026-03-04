@@ -70,6 +70,7 @@
 		<PackageReference Include="DevExpress.Maui.Controls" Version="25.2.5" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="3.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -5,18 +5,12 @@ namespace AloPrefeitoP.ViewModels;
 
 public class LoginPageViewModel
 {
+    public LoginPageViewModel()
+    {
+        LoginCommand = new Command(() => App.GoToHome());
+    }
     public string Email { get; set; }
     public string Senha { get; set; }
 
     public ICommand LoginCommand { get; }
-
-    public LoginPageViewModel()
-    {
-        LoginCommand = new Command(async () => await Login());
-    }
-
-    private async Task Login()
-    {
-        await Shell.Current.GoToAsync("//HomePage");
-    }
 }

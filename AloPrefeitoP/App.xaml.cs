@@ -8,7 +8,12 @@ namespace AloPrefeitoP
         public App()
         {
             InitializeComponent();
-            MainPage = new AppShell();
+            MainPage = new NavigationPage(new Pages.LoginPage());
+        }
+
+        public static void GoToHome()
+        {
+            Current.MainPage = new AppShell();
         }
     }
 }
