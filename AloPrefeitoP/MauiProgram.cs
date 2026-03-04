@@ -3,6 +3,7 @@ using AloPrefeitoP.Services;
 using CommunityToolkit.Maui;
 using DevExpress.Maui;
 using Microsoft.Extensions.Logging;
+using ScheduleListUI.Services;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace AloPrefeitoP
@@ -26,6 +27,8 @@ namespace AloPrefeitoP
 
 #if DEBUG
             builder.Services.AddSingleton<ApiServices>();
+            builder.Services.AddSingleton<ISQLiteDbServive, SQLiteDbServive>();
+            builder.Services.AddHttpClient();
             builder.Logging.AddDebug();
             builder.UseSkiaSharp();
 #endif
