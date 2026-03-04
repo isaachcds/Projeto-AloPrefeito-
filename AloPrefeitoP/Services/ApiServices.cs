@@ -111,8 +111,8 @@ namespace AloPrefeitoP.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var resposta = JsonSerializer.Deserialize<string>(json);
+                    var resposta = await response.Content.ReadAsStringAsync();
+                            //var resposta = JsonSerializer.Deserialize<string>(json);
 
 
                     return resposta;
