@@ -32,11 +32,13 @@
                 CornerRadius="12">
                 <VerticalStackLayout Spacing="15">
                     <Entry
+                         x:Name="EntEmail"
                         Keyboard="Email"
                         Placeholder="Email"
                         Text="{Binding Email}"
                         TextColor="black" />
                     <Entry
+                         x:Name="EntSenha"
                         IsPassword="True"
                         Placeholder="Senha"
                         Text="{Binding Senha}"
@@ -45,6 +47,7 @@
                     <Button
                         BackgroundColor="#5B6CF0"
                         Command="{Binding LoginCommand}"
+                        Clicked="Button_Clicked"
                         CornerRadius="8"
                         HeightRequest="45"
                         Text="Entrar"
