@@ -2,8 +2,6 @@
 using AloPrefeitoP.Models;
 using FacilityCareApp.Models;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,9 +15,6 @@ namespace AloPrefeitoP.Services
         private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/";
         private readonly ILogger<ApiServices> _logger;
         JsonSerializerOptions _serializerOptions;
-
-
-
 
         public ApiServices(HttpClient httpClient, ILogger<ApiServices> logger)
         {
@@ -57,9 +52,6 @@ namespace AloPrefeitoP.Services
                 Preferences.Set("usuarionome", result.UsuarioNome ?? "");
                 Preferences.Set("usuarioemail", result.UsuarioEmail ?? "");
                 Preferences.Set("tokenexpiration", result.Expiration ?? DateTime.MinValue);
-
-
-
                 return new ApiResponse<bool> { Data = true };
             }
             catch (Exception ex)
@@ -67,8 +59,6 @@ namespace AloPrefeitoP.Services
                 _logger.LogError($"Erro no login : {ex.Message}");
                 return new ApiResponse<bool> { ErrorMessage = ex.Message };
             }
-
-
         }
 
 
@@ -94,8 +84,6 @@ namespace AloPrefeitoP.Services
 
         public async Task<string> GetRespostaAgentContexto(string mensagem, int id)
         {
-            
-
             NetworkAccess accessType = Connectivity.Current.NetworkAccess;
 
             if (accessType != NetworkAccess.None)

@@ -5,6 +5,7 @@ using DevExpress.Maui;
 using Microsoft.Extensions.Logging;
 using ScheduleListUI.Services;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using CommunityToolkit.Maui.Media;
 
 namespace AloPrefeitoP
 {
