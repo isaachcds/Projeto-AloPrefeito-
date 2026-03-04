@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AloPrefeitoP.Pages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AloPrefeitoP
 {
@@ -7,11 +8,7 @@ namespace AloPrefeitoP
         public App()
         {
             InitializeComponent();
-        }
-
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new AppShell());
+            MainPage = new AppShell();
         }
     }
 }

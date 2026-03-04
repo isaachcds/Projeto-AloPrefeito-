@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using DevExpress.Maui;
 using Microsoft.Extensions.Logging;
 
 namespace AloPrefeitoP
@@ -10,6 +11,8 @@ namespace AloPrefeitoP
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseDevExpress()
+                .UseDevExpressControls()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
