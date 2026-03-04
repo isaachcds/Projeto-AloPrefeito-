@@ -6,15 +6,16 @@
     xmlns:dx="http://schemas.devexpress.com/maui"
     xmlns:lottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
     BackgroundColor="WhiteSmoke">
+
     <Grid
         Padding="22"
         RowDefinitions="Auto,*,Auto"
         RowSpacing="0">
+
         <VerticalStackLayout
             Grid.Row="0"
             Margin="0,8,0,0"
             Spacing="4">
-
             <Label
                 FontSize="16"
                 Text="{Binding Nome, StringFormat='Olá, {0}'}"
@@ -24,6 +25,7 @@
                 Text="Como posso lhe ajudar hoje?"
                 TextColor="#1B1B1B" />
         </VerticalStackLayout>
+
         <Grid Grid.Row="1">
             <dx:DXBorder
                 Padding="0"
@@ -33,6 +35,11 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 WidthRequest="170">
+
+                <dx:DXBorder.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding FalarCommand}" />
+                </dx:DXBorder.GestureRecognizers>
+
                 <Grid>
                     <lottie:SKLottieView
                         HeightRequest="120"
@@ -45,10 +52,8 @@
                 </Grid>
             </dx:DXBorder>
         </Grid>
-        <Grid
-            Grid.Row="2"
-            Margin="0,0,0,14"
-            ColumnDefinitions="*">
+
+        <Grid Grid.Row="2" Margin="0,0,0,14">
             <dx:DXBorder
                 Padding="14,10"
                 BackgroundColor="#E7E7E7"
@@ -58,8 +63,10 @@
                     FontSize="14"
                     Placeholder="Digite sua mensagem..."
                     PlaceholderColor="#6F6F6F"
+                    Text="{Binding TextoFalado}"
                     TextColor="#1B1B1B" />
             </dx:DXBorder>
         </Grid>
+
     </Grid>
 </ContentPage>
