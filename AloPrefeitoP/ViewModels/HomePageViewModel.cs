@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Dispatching;
 using System.Globalization;
 
 namespace AloPrefeitoP.ViewModels
@@ -11,72 +12,130 @@ namespace AloPrefeitoP.ViewModels
         private CancellationTokenSource? cts;
 
         [ObservableProperty]
-        private string textoFalado;
+        private string textoFalado = string.Empty;
 
         [ObservableProperty]
         private bool estaEscutando;
 
+        [ObservableProperty]
+        private string mensagemDigitada;
+
+        // Header + input só somem quando EstáEscutando = true
+        public bool NaoEstaEscutando => !EstaEscutando;
+
+        // Balão: durante escuta mostra "...", senão mostra a transcrição
+        public string TextoTranscricaoUI => EstaEscutando ? "..." : (TextoFalado ?? string.Empty);
+
+        // Balão aparece quando está escutando OU já tem texto transcrito
+        public bool TemTranscricao => EstaEscutando || !string.IsNullOrWhiteSpace(TextoFalado);
+
         public HomePageViewModel()
         {
-            // pode usar direto sem DI:
             speechToText = SpeechToText.Default;
 
-            speechToText.RecognitionResultUpdated += OnUpdated;
-            speechToText.RecognitionResultCompleted += OnCompleted;
+            speechToText.RecognitionResultUpdated += (_, e) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // parcial enquanto fala
+                    TextoFalado = e.RecognitionResult;
+                });
+            };
+
+            speechToText.RecognitionResultCompleted += (_, e) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    if (e.RecognitionResult.IsSuccessful)
+                        TextoFalado = e.RecognitionResult.Text;
+
+                    FinalizarEscutaUI();
+                });
+            };
         }
 
-        private void OnUpdated(object? sender, SpeechToTextRecognitionResultUpdatedEventArgs e)
+        partial void OnEstaEscutandoChanged(bool value)
         {
-            // parcial (enquanto fala)
-            TextoFalado = e.RecognitionResult;
+            OnPropertyChanged(nameof(NaoEstaEscutando));
+            OnPropertyChanged(nameof(TextoTranscricaoUI));
+            OnPropertyChanged(nameof(TemTranscricao));
         }
 
-        private void OnCompleted(object? sender, SpeechToTextRecognitionResultCompletedEventArgs e)
+        partial void OnTextoFaladoChanged(string value)
         {
-            // final (quando termina)
-            if (e.RecognitionResult.IsSuccessful)
-                TextoFalado = e.RecognitionResult.Text;
-
-            EstaEscutando = false;
-            cts?.Dispose();
-            cts = null;
+            OnPropertyChanged(nameof(TextoTranscricaoUI));
+            OnPropertyChanged(nameof(TemTranscricao));
         }
 
         [RelayCommand]
-        private async Task Falar()
+        private async Task ToggleEscuta()
         {
+            // 2º toque: para
             if (EstaEscutando)
+            {
+                try
+                {
+                    await speechToText.StopListenAsync(CancellationToken.None);
+                }
+                catch
+                {
+                    // se por algum motivo falhar o stop, garante UI de volta
+                    FinalizarEscutaUI();
+                }
                 return;
+            }
 
+            // 1º toque: começa
+            cts?.Dispose();
             cts = new CancellationTokenSource();
 
-            var granted = await speechToText.RequestPermissions(cts.Token);
+            bool granted;
+            try
+            {
+                granted = await speechToText.RequestPermissions(cts.Token);
+            }
+            catch
+            {
+                granted = false;
+            }
+
             if (!granted)
             {
+                // não esconde nada se não tiver permissão
                 cts.Dispose();
                 cts = null;
                 return;
             }
 
-            EstaEscutando = true;
+            // limpa transcrição anterior (opcional)
+            TextoFalado = string.Empty;
 
-            await speechToText.StartListenAsync(
-                new SpeechToTextOptions
-                {
-                    Culture = CultureInfo.GetCultureInfo("pt-BR"),
-                    ShouldReportPartialResults = true
-                },
-                cts.Token);
+            try
+            {
+                // 👇 agora sim: marca como escutando (a UI some aqui)
+                EstaEscutando = true;
+
+                await speechToText.StartListenAsync(
+                    new SpeechToTextOptions
+                    {
+                        Culture = CultureInfo.GetCultureInfo("pt-BR"),
+                        ShouldReportPartialResults = true
+                    },
+                    cts.Token);
+            }
+            catch
+            {
+                // se não conseguiu iniciar, traz UI de volta
+                FinalizarEscutaUI();
+            }
         }
 
-        [RelayCommand]
-        private async Task Parar()
+        private void FinalizarEscutaUI()
         {
-            if (!EstaEscutando)
-                return;
+            EstaEscutando = false;
 
-            await speechToText.StopListenAsync(CancellationToken.None);
-            // o Completed vai disparar e finalizar estado
+            cts?.Dispose();
+            cts = null;
         }
     }
 }
