@@ -19,7 +19,8 @@ public partial class LoginPage : ContentPage
     //{
     //    base.OnAppearing();
     //    string per = "Quais produtos estão abaixo do minimo?";
-    //    var response = await _apiServices.GetRespostaAgentContexto(per, 5);
+    //    //var response = await _apiServices.GetRespostaAgentContexto(per, 5);
+    //    var response = await _apiServices.Login("comercial@facilitycontrol.com.br", "abcd");
 
 
     //}
