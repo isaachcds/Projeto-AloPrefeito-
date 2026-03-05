@@ -15,12 +15,12 @@ public partial class LoginPage : ContentPage
 
     }
 
-    //override async protected void OnAppearing()
+   // override async protected void OnAppearing()
     //{
     //    base.OnAppearing();
     //    string per = "Quais produtos estão abaixo do minimo?";
     //    //var response = await _apiServices.GetRespostaAgentContexto(per, 5);
-    //    var response = await _apiServices.Login("comercial@facilitycontrol.com.br", "abcd");
+    //    var response = await _apiServices.Login("dev@iaintelligence.com.br", "Abcd123#");
 
 
     //}
