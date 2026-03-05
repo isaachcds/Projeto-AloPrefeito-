@@ -31,21 +31,31 @@
                 CornerRadius="12">
                 <VerticalStackLayout Spacing="15">
                     <Entry
-                        x:Name="EntEmail"
                         Keyboard="Email"
                         Placeholder="Email"
                         Text="{Binding Email}"
                         TextColor="black" />
-                    <Entry
-                        x:Name="EntSenha"
-                        IsPassword="True"
-                        Placeholder="Senha"
-                        Text="{Binding Senha}"
-                        TextColor="black" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry
+                            Grid.Column="0"
+                            IsPassword="{Binding SenhaVisivel, Converter={StaticResource InverseBoolConverter}}"
+                            Placeholder="Senha"
+                            Text="{Binding Senha}"
+                            TextColor="black" />
+
+                        <ImageButton
+                            Grid.Column="1"
+                            Padding="0"
+                            BackgroundColor="Transparent"
+                            Command="{Binding AlternarSenhaCommand}"
+                            HeightRequest="26"
+                            Source="{Binding SenhaVisivel, Converter={StaticResource PasswordEyeIconConverter}}"
+                            WidthRequest="26" />
+                    </Grid>
 
                     <Button
                         BackgroundColor="#5B6CF0"
-                        Clicked="Button_Clicked"
                         Command="{Binding LoginCommand}"
                         CornerRadius="8"
                         HeightRequest="45"
