@@ -5,14 +5,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
     xmlns:lottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+    Title="Início"
     BackgroundColor="WhiteSmoke">
 
     <Grid
         Padding="22"
         RowDefinitions="Auto,*,Auto"
-        RowSpacing="0">
+        RowSpacing="12">
 
-        <!--  HEADER (some quando está escutando)  -->
+        <!--  HEADER  -->
         <VerticalStackLayout
             Grid.Row="0"
             Margin="0,8,0,0"
@@ -28,34 +29,76 @@
                 TextColor="#1B1B1B" />
         </VerticalStackLayout>
 
-        <!--  MEIO: transcrição + microfone  -->
+        <!--  MEIO  -->
         <Grid
             Grid.Row="1"
-            RowDefinitions="Auto,*"
-            RowSpacing="18">
+            RowDefinitions="*,Auto,Auto,Auto"
+            RowSpacing="14">
 
-            <!--  balão de transcrição (aparece enquanto escuta com "..." e depois com texto)  -->
-            <dx:DXBorder
+            <!--  LISTA DO CHAT  -->
+            <CollectionView
+                x:Name="ChatList"
                 Grid.Row="0"
+                ItemsSource="{Binding ListaMensagens}"
+                SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Frame
+                                Margin="0,6"
+                                Padding="12"
+                                BackgroundColor="{Binding IsBot, Converter={StaticResource ChatBubbleColorConverter}}"
+                                CornerRadius="14"
+                                HasShadow="False"
+                                HorizontalOptions="{Binding IsBot, Converter={StaticResource ChatBubbleAlignConverter}}">
+                                <Label
+                                    FontSize="14"
+                                    Text="{Binding Mensagem}"
+                                    TextColor="#1B1B1B" />
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!--  IA está digitando  -->
+            <dx:DXBorder
+                Grid.Row="1"
+                Padding="12,8"
+                BackgroundColor="White"
+                CornerRadius="14"
+                HorizontalOptions="Start"
+                IsVisible="{Binding IaEstaDigitando}">
+                <Label
+                    FontSize="13"
+                    Text="Alô Prefeito está digitando..."
+                    TextColor="#6F6F6F" />
+            </dx:DXBorder>
+
+            <!--  TRANSCRIÇÃO: aparece só enquanto está escutando  -->
+            <dx:DXBorder
+                Grid.Row="2"
                 Padding="12,10"
                 BackgroundColor="#EAF7F7"
                 CornerRadius="14"
                 HorizontalOptions="Fill"
-                IsVisible="{Binding TemTranscricao}">
+                IsVisible="{Binding EstaEscutando}">
                 <Label
                     FontSize="14"
-                    Text="{Binding TextoTranscricaoUI}"
+                    Text="{Binding TextoFalado}"
                     TextColor="#1B1B1B" />
             </dx:DXBorder>
 
-            <!--  microfone  -->
+            <!--  MICROFONE GRANDE: só quando ainda não tem mensagens  -->
             <dx:DXBorder
-                Grid.Row="1"
+                Grid.Row="3"
                 Padding="0"
                 BackgroundColor="#6D74E6"
                 CornerRadius="85"
                 HeightRequest="170"
                 HorizontalOptions="Center"
+                IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
                 VerticalOptions="Center"
                 WidthRequest="170">
                 <Grid>
@@ -76,44 +119,84 @@
 
         </Grid>
 
-        <!--  INPUT (some quando está escutando)  -->
+        <!--  INPUT + microfone pequeno  -->
         <Grid
             Grid.Row="2"
             Margin="0,0,0,14"
-            ColumnDefinitions="*,Auto"
-            ColumnSpacing="10"
-            IsVisible="{Binding NaoEstaEscutando}">
+            IsVisible="{Binding NaoEstaEscutando}"
+            RowDefinitions="Auto,Auto"
+            RowSpacing="12">
 
+            <!--  LINHA 1: input + send  -->
+            <Grid
+                Grid.Row="0"
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="10">
+
+                <dx:DXBorder
+                    Grid.Column="0"
+                    Padding="14,10"
+                    BackgroundColor="#E7E7E7"
+                    CornerRadius="14">
+                    <Entry
+                        BackgroundColor="Transparent"
+                        FontSize="14"
+                        Placeholder="Digite sua mensagem..."
+                        PlaceholderColor="#6F6F6F"
+                        ReturnCommand="{Binding EnviarTextoCommand}"
+                        ReturnType="Send"
+                        Text="{Binding MensagemDigitada}"
+                        TextColor="#1B1B1B" />
+                </dx:DXBorder>
+
+                <dx:DXBorder
+                    Grid.Column="1"
+                    BackgroundColor="#6D74E6"
+                    CornerRadius="20"
+                    HeightRequest="40"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    WidthRequest="40">
+
+                    <Grid>
+                        <Image
+                            HeightRequest="18"
+                            HorizontalOptions="Center"
+                            Source="send.png"
+                            VerticalOptions="Center"
+                            WidthRequest="18" />
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EnviarTextoCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+
+                </dx:DXBorder>
+            </Grid>
+
+            <!--  LINHA 2: microfone pequeno, só quando já existem mensagens  -->
             <dx:DXBorder
-                Grid.Column="0"
-                Padding="14,10"
-                BackgroundColor="#E7E7E7"
-                CornerRadius="14">
-
-                <Entry
-                    BackgroundColor="Transparent"
-                    FontSize="14"
-                    Placeholder="Digite sua mensagem..."
-                    PlaceholderColor="#6F6F6F"
-                    Text="{Binding MensagemDigitada}"
-                    TextColor="#1B1B1B" />
-            </dx:DXBorder>
-
-            <!--  Botãozinho do lado (igual sua bolinha)  -->
-            <dx:DXBorder
-                Grid.Column="1"
+                Grid.Row="1"
                 BackgroundColor="#6D74E6"
-                CornerRadius="20"
-                HeightRequest="40"
-                HorizontalOptions="End"
-                VerticalOptions="Center"
-                WidthRequest="40">
-                <Label
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="i"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
+                CornerRadius="42"
+                HeightRequest="84"
+                HorizontalOptions="Center"
+                IsVisible="{Binding TemMensagens}"
+                WidthRequest="84">
+                <Grid>
+                    <lottie:SKLottieView
+                        HeightRequest="56"
+                        HorizontalOptions="Center"
+                        IsAnimationEnabled="{Binding EstaEscutando}"
+                        RepeatCount="-1"
+                        Source="microphone.json"
+                        VerticalOptions="Center"
+                        WidthRequest="56">
+                        <lottie:SKLottieView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleEscutaCommand}" />
+                        </lottie:SKLottieView.GestureRecognizers>
+                    </lottie:SKLottieView>
+                </Grid>
             </dx:DXBorder>
 
         </Grid>

@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Dispatching;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace AloPrefeitoP.ViewModels
@@ -12,8 +13,11 @@ namespace AloPrefeitoP.ViewModels
     {
         private readonly ISpeechToText speechToText;
         private CancellationTokenSource? cts;
-        private readonly ISQLiteDbServive _iSQLiteDbServive;
-        private readonly ApiServices _apiServices;
+
+        private readonly ISQLiteDbServive _db;
+        private readonly ApiServices _api;
+
+        public Action? ScrollToBottomRequested;
 
         [ObservableProperty]
         private string textoFalado = string.Empty;
@@ -22,62 +26,194 @@ namespace AloPrefeitoP.ViewModels
         private bool estaEscutando;
 
         [ObservableProperty]
-        private string mensagemDigitada;
+        private string mensagemDigitada = string.Empty;
 
-        // Header + input só somem quando EstáEscutando = true
+        [ObservableProperty]
+        private bool iaEstaDigitando;
+
+        [ObservableProperty]
+        private ObservableCollection<Mensagens> listaMensagens = new();
+
+        public string Nome => Preferences.Get("usuarionome", string.Empty);
+
         public bool NaoEstaEscutando => !EstaEscutando;
 
-        // Balão: durante escuta mostra "...", senão mostra a transcrição
-        public string TextoTranscricaoUI => EstaEscutando ? "..." : (TextoFalado ?? string.Empty);
+        public bool TemMensagens => ListaMensagens?.Count > 0;
 
-        // Balão aparece quando está escutando OU já tem texto transcrito
-        public bool TemTranscricao => EstaEscutando || !string.IsNullOrWhiteSpace(TextoFalado);
-
-        public HomePageViewModel(/*ApiServices apiServices, ISQLiteDbServive sQLiteDbServive*/)
+        public HomePageViewModel(ApiServices apiServices, ISQLiteDbServive sQLiteDbServive)
         {
+            _api = apiServices;
+            _db = sQLiteDbServive;
+
             speechToText = SpeechToText.Default;
+
+            ListaMensagens.CollectionChanged += (_, __) =>
+            {
+                OnPropertyChanged(nameof(TemMensagens));
+            };
 
             speechToText.RecognitionResultUpdated += (_, e) =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    // parcial enquanto fala
                     TextoFalado = e.RecognitionResult;
                 });
             };
 
-            speechToText.RecognitionResultCompleted += (_, e) =>
+            speechToText.RecognitionResultCompleted += async (_, e) =>
             {
-                MainThread.BeginInvokeOnMainThread(() =>
+                try
                 {
-                    if (e.RecognitionResult.IsSuccessful)
-                        TextoFalado = e.RecognitionResult.Text;
+                    var textoFinal = e.RecognitionResult.IsSuccessful
+                        ? e.RecognitionResult.Text
+                        : TextoFalado;
 
-                    FinalizarEscutaUI();
-                });
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        FinalizarEscutaUI();
+                    });
+
+                    if (string.IsNullOrWhiteSpace(textoFinal))
+                    {
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            TextoFalado = string.Empty;
+                        });
+                        return;
+                    }
+
+                    await EnviarMensagemFinalAsync(textoFinal);
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        TextoFalado = string.Empty;
+                    });
+                }
+                catch
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        FinalizarEscutaUI();
+                        TextoFalado = string.Empty;
+                    });
+                }
             };
-
-            //_apiServices = apiServices;
-            //_iSQLiteDbServive = sQLiteDbServive;
         }
 
         partial void OnEstaEscutandoChanged(bool value)
         {
             OnPropertyChanged(nameof(NaoEstaEscutando));
-            OnPropertyChanged(nameof(TextoTranscricaoUI));
-            OnPropertyChanged(nameof(TemTranscricao));
         }
 
-        partial void OnTextoFaladoChanged(string value)
+        public async Task LoadChatAtualAsync()
         {
-            OnPropertyChanged(nameof(TextoTranscricaoUI));
-            OnPropertyChanged(nameof(TemTranscricao));
+            await _db.InitializeAsync();
+
+            var chatId = Preferences.Get("chat_atual", "");
+
+            if (string.IsNullOrWhiteSpace(chatId))
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    ListaMensagens.Clear();
+                    ScrollToBottomRequested?.Invoke();
+                });
+                return;
+            }
+
+            var msgs = await _db.GetMensagensByChatId(chatId);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ListaMensagens.Clear();
+
+                foreach (var m in msgs)
+                    ListaMensagens.Add(m);
+
+                ScrollToBottomRequested?.Invoke();
+            });
+        }
+
+        private string GetOrCreateChatAtual()
+        {
+            var chatId = Preferences.Get("chat_atual", "");
+
+            if (string.IsNullOrWhiteSpace(chatId))
+            {
+                chatId = Guid.NewGuid().ToString("N");
+                Preferences.Set("chat_atual", chatId);
+            }
+
+            return chatId;
+        }
+
+        private async Task EnviarMensagemFinalAsync(string textoUsuario)
+        {
+            await _db.InitializeAsync();
+
+            var chatId = GetOrCreateChatAtual();
+            var userId = Preferences.Get("usuarioid", 0);
+            var nomeUser = Preferences.Get("usuarionome", string.Empty);
+
+            var msgUser = new Mensagens
+            {
+                Nome = nomeUser,
+                Mensagem = textoUsuario,
+                Data = DateTime.Now,
+                ChatId = chatId,
+                IsBot = false
+            };
+
+            await _db.AddMensagem(msgUser);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ListaMensagens.Add(msgUser);
+                ScrollToBottomRequested?.Invoke();
+            });
+
+            try
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IaEstaDigitando = true;
+                    ScrollToBottomRequested?.Invoke();
+                });
+
+                var resposta = await _api.GetRespostaAgentContexto(textoUsuario, userId);
+
+                if (string.IsNullOrWhiteSpace(resposta))
+                    resposta = "Não consegui responder agora. Tente novamente.";
+
+                var msgBot = new Mensagens
+                {
+                    Nome = "Alô Prefeito",
+                    Mensagem = resposta,
+                    Data = DateTime.Now,
+                    ChatId = chatId,
+                    IsBot = true
+                };
+
+                await _db.AddMensagem(msgBot);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    ListaMensagens.Add(msgBot);
+                    ScrollToBottomRequested?.Invoke();
+                });
+            }
+            finally
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IaEstaDigitando = false;
+                });
+            }
         }
 
         [RelayCommand]
         private async Task ToggleEscuta()
         {
-            // 2º toque: para
             if (EstaEscutando)
             {
                 try
@@ -86,13 +222,12 @@ namespace AloPrefeitoP.ViewModels
                 }
                 catch
                 {
-                    // se por algum motivo falhar o stop, garante UI de volta
                     FinalizarEscutaUI();
+                    TextoFalado = string.Empty;
                 }
                 return;
             }
 
-            // 1º toque: começa
             cts?.Dispose();
             cts = new CancellationTokenSource();
 
@@ -108,18 +243,15 @@ namespace AloPrefeitoP.ViewModels
 
             if (!granted)
             {
-                // não esconde nada se não tiver permissão
                 cts.Dispose();
                 cts = null;
                 return;
             }
 
-            // limpa transcrição anterior (opcional)
             TextoFalado = string.Empty;
 
             try
             {
-                // 👇 agora sim: marca como escutando (a UI some aqui)
                 EstaEscutando = true;
 
                 await speechToText.StartListenAsync(
@@ -132,8 +264,8 @@ namespace AloPrefeitoP.ViewModels
             }
             catch
             {
-                // se não conseguiu iniciar, traz UI de volta
                 FinalizarEscutaUI();
+                TextoFalado = string.Empty;
             }
         }
 
@@ -145,22 +277,17 @@ namespace AloPrefeitoP.ViewModels
             cts = null;
         }
 
+        [RelayCommand]
+        private async Task EnviarTexto()
+        {
+            if (string.IsNullOrWhiteSpace(MensagemDigitada))
+                return;
 
+            var texto = MensagemDigitada.Trim();
 
-        // EXEMPLO DE USO: a cada atualização parcial do texto falado, salva no SQLite e envia para API 
+            MensagemDigitada = string.Empty;
 
-        //  var fala = new Mensagens
-        //  {
-        //      Nome = Preferences.Get("usuarionome", string.Empty),
-        //      Mensagem = TextoFalado,
-        //      Data = DateTime.Now
-
-        //  };
-        //  int id = Preferences.Get("usuarioid", 0);
-        //var response =  await _apiServices.GetRespostaAgentContexto(TextoFalado, id); // ENVIA PARA API A CADA ATUALIZAÇÃO PARCIAL
-        //  await _iSQLiteDbServive.InitializeAsync(); // GARANTE QUE O SQLITE ESTEJA PRONTO
-
-        //  await _iSQLiteDbServive.AddMensagem(fala); // SALVA NO SQLITE A CADA ATUALIZAÇÃO PARCIAL
-        //  await _iSQLiteDbServive.GetMensagem(); // TRAS TODAS AS MENSAGENS DO SQLITE 
+            await EnviarMensagemFinalAsync(texto);
+        }
     }
 }

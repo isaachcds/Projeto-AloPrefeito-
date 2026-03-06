@@ -84,28 +84,18 @@ namespace AloPrefeitoP.Services
 
         public async Task<string> GetRespostaAgentContexto(string mensagem, int id)
         {
-            NetworkAccess accessType = Connectivity.Current.NetworkAccess;
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.None)
+                return string.Empty;
 
-            if (accessType != NetworkAccess.None)
-            {
-                var response = await _httpClient.GetAsync(_baseUrl + $"api/SupporteAloPreito/AloPrefeito?Mensagem={mensagem}&UserID={id}"
+            var msg = Uri.EscapeDataString(mensagem ?? "");
+            var url = $"{_baseUrl}api/SupporteAloPreito/AloPrefeito?Mensagem={msg}&UserID={id}";
 
+            var response = await _httpClient.GetAsync(url);
 
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
 
-             );
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var resposta = await response.Content.ReadAsStringAsync();
-                            //var resposta = JsonSerializer.Deserialize<string>(json);
-
-
-                    return resposta;
-
-                }
-
-            }
-            return string.Empty;
+            return await response.Content.ReadAsStringAsync();
         }
 
 

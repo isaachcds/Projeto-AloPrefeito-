@@ -12,4 +12,8 @@
     <FlyoutItem Title="Início" Route="Home">
         <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" />
     </FlyoutItem>
+
+    <FlyoutItem Title="Histórico" Route="Historico">
+        <ShellContent ContentTemplate="{DataTemplate pages:HistoricoPage}" Route="HistoricoPage" />
+    </FlyoutItem>
 </Shell>

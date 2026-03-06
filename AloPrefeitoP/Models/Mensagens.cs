@@ -12,5 +12,12 @@ namespace AloPrefeitoP.Models
         public string Nome { get; set; }
         public string Mensagem { get; set; }
         public DateTime Data { get; set; }
+
+        // Identifica a conversa
+        public string ChatId { get; set; } = "";
+
+        // Diferencia usuário x IA para bolhas
+        // false = usuário | true = IA
+        public bool IsBot { get; set; }
     }
 }
