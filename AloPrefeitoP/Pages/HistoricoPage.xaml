@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AloPrefeitoP.Pages.HistoricoPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dx="http://schemas.devexpress.com/maui"
+    xmlns:models="clr-namespace:AloPrefeitoP.Models"
+    Title="Histórico"
+    BackgroundColor="WhiteSmoke">
+
+    <Grid
+        Padding="18"
+        RowDefinitions="Auto,*"
+        RowSpacing="12">
+
+        <!--  topo  -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="10">
+            <Label
+                FontAttributes="Bold"
+                FontSize="20"
+                Text="Conversas"
+                TextColor="#1B1B1B"
+                VerticalOptions="Center" />
+
+            <Button
+                Grid.Column="1"
+                Padding="14,10"
+                BackgroundColor="#6D74E6"
+                Command="{Binding NovoChatCommand}"
+                CornerRadius="12"
+                Text="Novo chat"
+                TextColor="White" />
+        </Grid>
+
+        <!--  lista  -->
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Chats}"
+            SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ChatResumo">
+                    <Grid>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.AbrirChatCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+
+                        <Frame
+                            Margin="0,0,0,10"
+                            Padding="14"
+                            BackgroundColor="White"
+                            CornerRadius="14"
+                            HasShadow="False">
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    Text="{Binding Titulo}"
+                                    TextColor="#1B1B1B" />
+
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    FontSize="12"
+                                    Text="{Binding UltimaDataTexto}"
+                                    TextColor="#6F6F6F"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    FontSize="12"
+                                    Text="Toque para abrir"
+                                    TextColor="#6F6F6F" />
+                            </Grid>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

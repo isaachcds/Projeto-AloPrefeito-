@@ -34,7 +34,10 @@ namespace AloPrefeitoP
             builder.Services.AddHttpClient<ApiServices>();
             builder.Services.AddTransient<LoginPageViewModel>();
             builder.Services.AddTransient<LoginPage>();
-
+            builder.Services.AddTransient<HistoricoViewModel>();
+            builder.Services.AddTransient<HistoricoPage>();
+            builder.Services.AddTransient<HomePageViewModel>();
+            builder.Services.AddTransient<HomePage>();
             return builder.Build();
         }
     }

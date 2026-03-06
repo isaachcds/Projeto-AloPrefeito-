@@ -15,6 +15,8 @@ namespace AloPrefeitoP.Services
         Task<int> AddMensagem(Mensagens mensagen);
         Task<int> DeleteMensagem(Mensagens destaque);
 
-       
+        // novas operações para o chat
+        Task<IEnumerable<Mensagens>> GetMensagensByChatId(string chatId);
+        Task<IEnumerable<Mensagens>> GetChatsAgrupados();
     }
 }

@@ -5,12 +5,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
     xmlns:lottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+    Title="Início"
     BackgroundColor="WhiteSmoke">
 
     <Grid
         Padding="22"
         RowDefinitions="Auto,*,Auto"
-        RowSpacing="0">
+        RowSpacing="12">
 
         <!--  HEADER (some quando está escutando)  -->
         <VerticalStackLayout
@@ -28,15 +29,56 @@
                 TextColor="#1B1B1B" />
         </VerticalStackLayout>
 
-        <!--  MEIO: transcrição + microfone  -->
+        <!--  MEIO: chat + digitando + transcrição + microfone  -->
         <Grid
             Grid.Row="1"
-            RowDefinitions="Auto,*"
-            RowSpacing="18">
+            RowDefinitions="*,Auto,Auto,Auto"
+            RowSpacing="14">
 
-            <!--  balão de transcrição (aparece enquanto escuta com "..." e depois com texto)  -->
-            <dx:DXBorder
+            <!--  LISTA DO CHAT  -->
+            <CollectionView
+                x:Name="ChatList"
                 Grid.Row="0"
+                ItemsSource="{Binding ListaMensagens}"
+                SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Frame
+                                Margin="0,6"
+                                Padding="12"
+                                BackgroundColor="{Binding IsBot, Converter={StaticResource ChatBubbleColorConverter}}"
+                                CornerRadius="14"
+                                HasShadow="False"
+                                HorizontalOptions="{Binding IsBot, Converter={StaticResource ChatBubbleAlignConverter}}">
+                                <Label
+                                    FontSize="14"
+                                    Text="{Binding Mensagem}"
+                                    TextColor="#1B1B1B" />
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!--  IA está digitando... (aparece enquanto espera a API)  -->
+            <dx:DXBorder
+                Grid.Row="1"
+                Padding="12,8"
+                BackgroundColor="White"
+                CornerRadius="14"
+                HorizontalOptions="Start"
+                IsVisible="{Binding IaEstaDigitando}">
+                <Label
+                    FontSize="13"
+                    Text="Alô Prefeito está digitando..."
+                    TextColor="#6F6F6F" />
+            </dx:DXBorder>
+
+            <!--  balão de transcrição  -->
+            <dx:DXBorder
+                Grid.Row="2"
                 Padding="12,10"
                 BackgroundColor="#EAF7F7"
                 CornerRadius="14"
@@ -50,7 +92,7 @@
 
             <!--  microfone  -->
             <dx:DXBorder
-                Grid.Row="1"
+                Grid.Row="3"
                 Padding="0"
                 BackgroundColor="#6D74E6"
                 CornerRadius="85"
@@ -89,17 +131,18 @@
                 Padding="14,10"
                 BackgroundColor="#E7E7E7"
                 CornerRadius="14">
-
                 <Entry
                     BackgroundColor="Transparent"
                     FontSize="14"
                     Placeholder="Digite sua mensagem..."
                     PlaceholderColor="#6F6F6F"
+                    ReturnCommand="{Binding EnviarTextoCommand}"
+                    ReturnType="Send"
                     Text="{Binding MensagemDigitada}"
                     TextColor="#1B1B1B" />
             </dx:DXBorder>
 
-            <!--  Botãozinho do lado (igual sua bolinha)  -->
+            <!--  botão enviar (seta)  -->
             <dx:DXBorder
                 Grid.Column="1"
                 BackgroundColor="#6D74E6"
@@ -108,12 +151,20 @@
                 HorizontalOptions="End"
                 VerticalOptions="Center"
                 WidthRequest="40">
-                <Label
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="i"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
+
+                <Grid>
+                    <Image
+                        HeightRequest="18"
+                        HorizontalOptions="Center"
+                        Source="send.png"
+                        VerticalOptions="Center"
+                        WidthRequest="18" />
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding EnviarTextoCommand}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+
             </dx:DXBorder>
 
         </Grid>
