@@ -13,35 +13,44 @@ namespace AloPrefeitoP.ViewModels
     {
         private readonly ISpeechToText speechToText;
         private CancellationTokenSource? cts;
-        public Action? ScrollToBottomRequested;
+
         private readonly ISQLiteDbServive _db;
         private readonly ApiServices _api;
 
-        [ObservableProperty] private string textoFalado = string.Empty;
-        [ObservableProperty] private bool estaEscutando;
-        [ObservableProperty] private string mensagemDigitada = string.Empty;
+        public Action? ScrollToBottomRequested;
+
+        [ObservableProperty]
+        private string textoFalado = string.Empty;
+
+        [ObservableProperty]
+        private bool estaEscutando;
+
+        [ObservableProperty]
+        private string mensagemDigitada = string.Empty;
+
         [ObservableProperty]
         private bool iaEstaDigitando;
-        [ObservableProperty] private ObservableCollection<Mensagens> listaMensagens = new();
+
+        [ObservableProperty]
+        private ObservableCollection<Mensagens> listaMensagens = new();
 
         public string Nome => Preferences.Get("usuarionome", string.Empty);
 
-        // Header + input só somem quando EstáEscutando = true
         public bool NaoEstaEscutando => !EstaEscutando;
 
-        // Balão: durante escuta mostra "...", senão mostra a transcrição
-        public string TextoTranscricaoUI => EstaEscutando ? "..." : (TextoFalado ?? string.Empty);
-
-        // Balão aparece quando está escutando OU já tem texto transcrito
-        public bool TemTranscricao => EstaEscutando || !string.IsNullOrWhiteSpace(TextoFalado);
-
         public bool TemMensagens => ListaMensagens?.Count > 0;
+
         public HomePageViewModel(ApiServices apiServices, ISQLiteDbServive sQLiteDbServive)
         {
             _api = apiServices;
             _db = sQLiteDbServive;
 
             speechToText = SpeechToText.Default;
+
+            ListaMensagens.CollectionChanged += (_, __) =>
+            {
+                OnPropertyChanged(nameof(TemMensagens));
+            };
 
             speechToText.RecognitionResultUpdated += (_, e) =>
             {
@@ -61,53 +70,53 @@ namespace AloPrefeitoP.ViewModels
 
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        TextoFalado = textoFinal ?? "";
                         FinalizarEscutaUI();
                     });
 
                     if (string.IsNullOrWhiteSpace(textoFinal))
+                    {
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            TextoFalado = string.Empty;
+                        });
                         return;
+                    }
 
                     await EnviarMensagemFinalAsync(textoFinal);
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        TextoFalado = string.Empty;
+                    });
                 }
                 catch
                 {
-                    MainThread.BeginInvokeOnMainThread(FinalizarEscutaUI);
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        FinalizarEscutaUI();
+                        TextoFalado = string.Empty;
+                    });
                 }
-            };
-
-            ListaMensagens.CollectionChanged += (_, __) =>
-            {
-                OnPropertyChanged(nameof(TemMensagens));
             };
         }
 
         partial void OnEstaEscutandoChanged(bool value)
         {
             OnPropertyChanged(nameof(NaoEstaEscutando));
-            OnPropertyChanged(nameof(TextoTranscricaoUI));
-            OnPropertyChanged(nameof(TemTranscricao));
         }
 
-        partial void OnTextoFaladoChanged(string value)
-        {
-            OnPropertyChanged(nameof(TextoTranscricaoUI));
-            OnPropertyChanged(nameof(TemTranscricao));
-        }
-
-        // ✅ Carrega o chat atual (quando abre Home)
         public async Task LoadChatAtualAsync()
         {
             await _db.InitializeAsync();
 
             var chatId = Preferences.Get("chat_atual", "");
 
-            // Sem chat ainda = Home vazia (Modo 2 cria na 1ª fala)
             if (string.IsNullOrWhiteSpace(chatId))
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     ListaMensagens.Clear();
+                    ScrollToBottomRequested?.Invoke();
                 });
                 return;
             }
@@ -117,8 +126,11 @@ namespace AloPrefeitoP.ViewModels
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 ListaMensagens.Clear();
+
                 foreach (var m in msgs)
                     ListaMensagens.Add(m);
+
+                ScrollToBottomRequested?.Invoke();
             });
         }
 
@@ -143,7 +155,6 @@ namespace AloPrefeitoP.ViewModels
             var userId = Preferences.Get("usuarioid", 0);
             var nomeUser = Preferences.Get("usuarionome", string.Empty);
 
-            // 1) salva msg do usuário
             var msgUser = new Mensagens
             {
                 Nome = nomeUser,
@@ -158,19 +169,22 @@ namespace AloPrefeitoP.ViewModels
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 ListaMensagens.Add(msgUser);
-                ScrollToBottomRequested?.Invoke(); // ✅ aqui entra o scroll
+                ScrollToBottomRequested?.Invoke();
             });
 
             try
             {
-                IaEstaDigitando = true; // ✅ mostra indicador
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IaEstaDigitando = true;
+                    ScrollToBottomRequested?.Invoke();
+                });
 
-                // 2) chama IA
                 var resposta = await _api.GetRespostaAgentContexto(textoUsuario, userId);
+
                 if (string.IsNullOrWhiteSpace(resposta))
                     resposta = "Não consegui responder agora. Tente novamente.";
 
-                // 3) salva msg do bot
                 var msgBot = new Mensagens
                 {
                     Nome = "Alô Prefeito",
@@ -185,13 +199,15 @@ namespace AloPrefeitoP.ViewModels
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     ListaMensagens.Add(msgBot);
-                    TextoFalado = "";
-                    ScrollToBottomRequested?.Invoke(); // ✅ e aqui também
+                    ScrollToBottomRequested?.Invoke();
                 });
             }
             finally
             {
-                IaEstaDigitando = false; // ✅ some indicador
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IaEstaDigitando = false;
+                });
             }
         }
 
@@ -207,6 +223,7 @@ namespace AloPrefeitoP.ViewModels
                 catch
                 {
                     FinalizarEscutaUI();
+                    TextoFalado = string.Empty;
                 }
                 return;
             }
@@ -248,6 +265,7 @@ namespace AloPrefeitoP.ViewModels
             catch
             {
                 FinalizarEscutaUI();
+                TextoFalado = string.Empty;
             }
         }
 
@@ -258,7 +276,6 @@ namespace AloPrefeitoP.ViewModels
             cts?.Dispose();
             cts = null;
         }
-
 
         [RelayCommand]
         private async Task EnviarTexto()

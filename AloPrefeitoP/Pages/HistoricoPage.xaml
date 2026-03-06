@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
     xmlns:models="clr-namespace:AloPrefeitoP.Models"
+    x:Name="HistoricoRoot"
     Title="Histórico"
     BackgroundColor="WhiteSmoke">
 
@@ -43,17 +44,15 @@
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:ChatResumo">
-                    <Grid>
+                    <Grid Margin="0,0,0,10">
                         <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding BindingContext.AbrirChatCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.AbrirChatCommand}" CommandParameter="{Binding .}" />
                         </Grid.GestureRecognizers>
 
-                        <Frame
-                            Margin="0,0,0,10"
+                        <dx:DXBorder
                             Padding="14"
                             BackgroundColor="White"
-                            CornerRadius="14"
-                            HasShadow="False">
+                            CornerRadius="14">
                             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
                                 <Label
                                     Grid.Row="0"
@@ -79,7 +78,7 @@
                                     Text="Toque para abrir"
                                     TextColor="#6F6F6F" />
                             </Grid>
-                        </Frame>
+                        </dx:DXBorder>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

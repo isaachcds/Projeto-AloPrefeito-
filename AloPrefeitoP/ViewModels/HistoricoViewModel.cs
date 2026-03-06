@@ -84,9 +84,9 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task AbrirChat(ChatResumo chat)
         {
-            if (chat == null) return;
+            if (chat == null)
+                return;
 
-            // define o chat atual e volta pra Home
             Preferences.Set("chat_atual", chat.ChatId);
             await Shell.Current.GoToAsync("//Home");
         }
