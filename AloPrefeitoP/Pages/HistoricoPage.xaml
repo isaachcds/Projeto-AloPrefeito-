@@ -7,44 +7,98 @@
     xmlns:models="clr-namespace:AloPrefeitoP.Models"
     x:Name="HistoricoRoot"
     Title="Histórico"
-    BackgroundColor="WhiteSmoke">
+    BackgroundColor="#F5F5F7">
 
     <Grid
-        Padding="18"
-        RowDefinitions="Auto,*"
-        RowSpacing="12">
+        Padding="20,16"
+        RowDefinitions="Auto,Auto,*"
+        RowSpacing="14">
 
-        <!--  topo  -->
-        <Grid
-            Grid.Row="0"
-            ColumnDefinitions="*,Auto"
-            ColumnSpacing="10">
+        <!--  TOPO  -->
+        <VerticalStackLayout Grid.Row="0" Spacing="4">
             <Label
                 FontAttributes="Bold"
-                FontSize="20"
-                Text="Conversas"
-                TextColor="#1B1B1B"
-                VerticalOptions="Center" />
+                FontSize="24"
+                Text="Histórico"
+                TextColor="#1B1B1B" />
+            <Label
+                FontSize="13"
+                Text="Acesse conversas anteriores ou inicie um novo chat."
+                TextColor="#6F6F6F" />
+        </VerticalStackLayout>
 
-            <Button
-                Grid.Column="1"
-                Padding="14,10"
-                BackgroundColor="#6D74E6"
-                Command="{Binding NovoChatCommand}"
-                CornerRadius="12"
-                Text="Novo chat"
-                TextColor="White" />
-        </Grid>
-
-        <!--  lista  -->
-        <CollectionView
+        <!--  BOTÃO NOVO CHAT  -->
+        <dx:DXBorder
             Grid.Row="1"
+            Padding="0"
+            BackgroundColor="#6D74E6"
+            CornerRadius="16"
+            HeightRequest="50">
+
+            <Grid>
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NovoChatCommand}" />
+                </Grid.GestureRecognizers>
+
+                <Grid
+                    Padding="16,0"
+                    ColumnDefinitions="Auto,*"
+                    ColumnSpacing="10">
+
+                    <Label
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="+"
+                        TextColor="White"
+                        VerticalOptions="Center" />
+
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        Text="Novo chat"
+                        TextColor="White"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Grid>
+        </dx:DXBorder>
+
+        <!--  LISTA  -->
+        <CollectionView
+            Grid.Row="2"
             ItemsSource="{Binding Chats}"
-            SelectionMode="None">
+            SelectionMode="None"
+            VerticalScrollBarVisibility="Never">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout
+                    Padding="20,40"
+                    HorizontalOptions="Center"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <Label
+                        FontSize="18"
+                        HorizontalTextAlignment="Center"
+                        Text="💬" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        HorizontalTextAlignment="Center"
+                        Text="Nenhuma conversa ainda"
+                        TextColor="#1B1B1B" />
+                    <Label
+                        FontSize="13"
+                        HorizontalTextAlignment="Center"
+                        Text="Quando você iniciar um chat, ele aparecerá aqui."
+                        TextColor="#6F6F6F" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:ChatResumo">
-                    <Grid Margin="0,0,0,10">
+                    <Grid Margin="0,0,0,12">
+
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.AbrirChatCommand}" CommandParameter="{Binding .}" />
                         </Grid.GestureRecognizers>
@@ -52,32 +106,52 @@
                         <dx:DXBorder
                             Padding="14"
                             BackgroundColor="White"
-                            CornerRadius="14">
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                                <Label
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    FontAttributes="Bold"
-                                    FontSize="14"
-                                    Text="{Binding Titulo}"
-                                    TextColor="#1B1B1B" />
+                            CornerRadius="18">
 
+                            <Grid
+                                ColumnDefinitions="Auto,*,Auto"
+                                ColumnSpacing="12"
+                                RowDefinitions="Auto,Auto">
+
+                                <!--  Bolinha lateral  -->
+                                <dx:DXBorder
+                                    Grid.RowSpan="2"
+                                    BackgroundColor="#6D74E6"
+                                    CornerRadius="5"
+                                    HeightRequest="10"
+                                    VerticalOptions="Center"
+                                    WidthRequest="10" />
+
+                                <!--  Título  -->
                                 <Label
                                     Grid.Row="0"
                                     Grid.Column="1"
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="1"
+                                    Text="{Binding Titulo}"
+                                    TextColor="#1B1B1B" />
+
+                                <!--  Data  -->
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="2"
                                     FontSize="12"
                                     Text="{Binding UltimaDataTexto}"
-                                    TextColor="#6F6F6F"
+                                    TextColor="#8A8A8A"
                                     VerticalOptions="Center" />
 
+                                <!--  Subtexto  -->
                                 <Label
                                     Grid.Row="1"
-                                    Grid.Column="0"
+                                    Grid.Column="1"
                                     Grid.ColumnSpan="2"
                                     FontSize="12"
-                                    Text="Toque para abrir"
+                                    Text="Toque para abrir esta conversa"
                                     TextColor="#6F6F6F" />
                             </Grid>
+
                         </dx:DXBorder>
                     </Grid>
                 </DataTemplate>
