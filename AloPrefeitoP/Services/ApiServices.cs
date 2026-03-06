@@ -94,9 +94,6 @@ namespace AloPrefeitoP.Services
 
              );
 
-
-
-
                 if (response.IsSuccessStatusCode)
                 {
                     var resposta = await response.Content.ReadAsStringAsync();
