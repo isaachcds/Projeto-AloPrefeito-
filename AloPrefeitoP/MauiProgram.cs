@@ -1,11 +1,11 @@
 ﻿using AloPrefeitoP.Pages;
 using AloPrefeitoP.Services;
+using AloPrefeitoP.ViewModels;
 using CommunityToolkit.Maui;
 using DevExpress.Maui;
 using Microsoft.Extensions.Logging;
 using ScheduleListUI.Services;
 using SkiaSharp.Views.Maui.Controls.Hosting;
-using CommunityToolkit.Maui.Media;
 
 namespace AloPrefeitoP
 {
@@ -14,6 +14,7 @@ namespace AloPrefeitoP
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
                 .UseDevExpress()
@@ -27,12 +28,12 @@ namespace AloPrefeitoP
                 });
 
 #if DEBUG
-            builder.Services.AddSingleton<ApiServices>();
-            builder.Services.AddSingleton<ISQLiteDbServive, SQLiteDbServive>();
-            builder.Services.AddHttpClient();
             builder.Logging.AddDebug();
-            builder.UseSkiaSharp();
 #endif
+            builder.Services.AddSingleton<ISQLiteDbServive, SQLiteDbServive>();
+            builder.Services.AddHttpClient<ApiServices>();
+            builder.Services.AddTransient<LoginPageViewModel>();
+            builder.Services.AddTransient<LoginPage>();
 
             return builder.Build();
         }
