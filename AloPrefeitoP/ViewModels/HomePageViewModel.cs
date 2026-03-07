@@ -31,6 +31,11 @@ namespace AloPrefeitoP.ViewModels
         [ObservableProperty]
         private bool iaEstaDigitando;
 
+        //[ObservableProperty]
+        //private bool fala;
+
+        
+
         [ObservableProperty]
         private ObservableCollection<Mensagens> listaMensagens = new();
 
@@ -185,7 +190,7 @@ namespace AloPrefeitoP.ViewModels
                 if (string.IsNullOrWhiteSpace(resposta))
                     resposta = "Não consegui responder agora. Tente novamente.";
 
-                if(!string.IsNullOrWhiteSpace(TextoFalado))
+                if(!string.IsNullOrWhiteSpace(TextoFalado) /*&& fala == true*/)
                 {
                     TextoFalado = string.Empty;
 
