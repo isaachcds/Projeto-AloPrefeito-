@@ -187,6 +187,8 @@ namespace AloPrefeitoP.ViewModels
 
                 if(!string.IsNullOrWhiteSpace(TextoFalado))
                 {
+                    TextoFalado = string.Empty;
+
                     IEnumerable<Locale> locales = await TextToSpeech.Default.GetLocalesAsync();
 
                     Locale ptBR = locales.FirstOrDefault(l =>

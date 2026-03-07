@@ -12,8 +12,8 @@ namespace AloPrefeitoP.Services
     public class ApiServices
     {
         private readonly HttpClient _httpClient;
-        private static string _baseUrl = "https://apiagente.iaintelligence.com.br/";
-      //  private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/"; //teste
+      //  private static string _baseUrl = "https://apiagente.iaintelligence.com.br/";
+       private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/"; //teste
 
         private readonly ILogger<ApiServices> _logger;
         JsonSerializerOptions _serializerOptions;
