@@ -31,11 +31,8 @@ namespace AloPrefeitoP.ViewModels
 
                 await _db.InitializeAsync();
 
-                // pega 1 registro representando cada chat (mais recente)
                 var ultimasPorChat = (await _db.GetChatsAgrupados()).ToList();
 
-                // para título, vamos pegar a primeira msg do usuário de cada chat
-                // (mais simples: buscar todas do chat e pegar a 1ª não-bot)
                 var lista = new List<ChatResumo>();
 
                 foreach (var ultima in ultimasPorChat)
@@ -58,7 +55,6 @@ namespace AloPrefeitoP.ViewModels
                     });
                 }
 
-                // ordena por última atividade
                 lista = lista.OrderByDescending(x => x.UltimaData).ToList();
 
                 Chats.Clear();
@@ -74,10 +70,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task NovoChat()
         {
-            // limpa chat atual -> HomePage inicia vazia (Modo 2 cria na 1ª fala)
             Preferences.Remove("chat_atual");
-
-            // navega para Home
             await Shell.Current.GoToAsync("//Home");
         }
 
@@ -89,6 +82,47 @@ namespace AloPrefeitoP.ViewModels
 
             Preferences.Set("chat_atual", chat.ChatId);
             await Shell.Current.GoToAsync("//Home");
+        }
+
+        [RelayCommand]
+        private async Task MostrarOpcoes(ChatResumo chat)
+        {
+            if (chat == null)
+                return;
+
+            var acao = await Shell.Current.DisplayActionSheet(
+                "Conversa",
+                "Cancelar",
+                null,
+                "Abrir",
+                "Excluir");
+
+            switch (acao)
+            {
+                case "Abrir":
+                    await AbrirChat(chat);
+                    break;
+
+                case "Excluir":
+                    var confirmar = await Shell.Current.DisplayAlert(
+                        "Excluir conversa",
+                        "Deseja realmente excluir esta conversa?",
+                        "Excluir",
+                        "Cancelar");
+
+                    if (!confirmar)
+                        return;
+
+                    await _db.DeleteChatByChatId(chat.ChatId);
+
+                    // se a conversa excluída era a atual, limpa a preferência
+                    var chatAtual = Preferences.Get("chat_atual", "");
+                    if (chatAtual == chat.ChatId)
+                        Preferences.Remove("chat_atual");
+
+                    await LoadAsync();
+                    break;
+            }
         }
     }
 }

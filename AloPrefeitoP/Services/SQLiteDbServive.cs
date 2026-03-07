@@ -110,5 +110,14 @@ namespace ScheduleListUI.Services
                         .OrderByDescending(x => x.Data)
                         .ToList();
         }
+
+        public async Task<int> DeleteChatByChatId(string chatId)
+        {
+            await InitializeAsync();
+
+            return await _dbConnection.ExecuteAsync(
+                "DELETE FROM Mensagens WHERE ChatId = ?",
+                chatId);
+        }
     }
 }
