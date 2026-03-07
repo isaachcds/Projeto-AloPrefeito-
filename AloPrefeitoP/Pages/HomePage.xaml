@@ -15,9 +15,10 @@
 
         <!--  HEADER  -->
         <VerticalStackLayout
+            x:Name="HeaderBoasVindas"
             Grid.Row="0"
             Margin="0,8,0,0"
-            IsVisible="{Binding NaoEstaEscutando}"
+            IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
             Spacing="4">
             <Label
                 FontSize="16"
