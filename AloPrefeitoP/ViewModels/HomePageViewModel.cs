@@ -32,7 +32,7 @@ namespace AloPrefeitoP.ViewModels
         private bool iaEstaDigitando;
 
         //[ObservableProperty]
-        //private bool fala;
+        //private bool fala; 
 
         
 
