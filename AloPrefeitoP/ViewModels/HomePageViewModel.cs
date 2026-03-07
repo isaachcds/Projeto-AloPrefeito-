@@ -185,6 +185,29 @@ namespace AloPrefeitoP.ViewModels
                 if (string.IsNullOrWhiteSpace(resposta))
                     resposta = "Não consegui responder agora. Tente novamente.";
 
+                if(!string.IsNullOrWhiteSpace(TextoFalado))
+                {
+                    IEnumerable<Locale> locales = await TextToSpeech.Default.GetLocalesAsync();
+
+                    Locale ptBR = locales.FirstOrDefault(l =>
+                        l.Language.Equals("pt", StringComparison.OrdinalIgnoreCase) &&
+                        l.Country.Equals("BR", StringComparison.OrdinalIgnoreCase))
+                        ?? locales.FirstOrDefault();
+
+                    SpeechOptions options = new SpeechOptions()
+                    {
+                        Pitch = 1.0f,
+                        Volume = 1.0f,
+                        Rate = 0.9f,
+                        Locale = ptBR
+                    };
+
+                    await TextToSpeech.Default.SpeakAsync(resposta, options);
+
+
+
+                }
+
                 var msgBot = new Mensagens
                 {
                     Nome = "Alô Prefeito",
@@ -288,6 +311,6 @@ namespace AloPrefeitoP.ViewModels
             MensagemDigitada = string.Empty;
 
             await EnviarMensagemFinalAsync(texto);
-        }
+            }
     }
 }
