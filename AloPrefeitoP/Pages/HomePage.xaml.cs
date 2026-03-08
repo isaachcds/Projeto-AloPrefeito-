@@ -40,6 +40,7 @@ public partial class HomePage : ContentPage
         }
     }
 
+    //Animação
     private async void ListaMensagens_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (_headerJaAnimou)

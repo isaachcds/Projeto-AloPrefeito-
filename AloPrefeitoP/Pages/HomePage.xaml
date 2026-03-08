@@ -13,22 +13,57 @@
         RowDefinitions="Auto,*,Auto,Auto"
         RowSpacing="12">
 
-        <!--  HEADER  -->
-        <VerticalStackLayout
-            x:Name="HeaderBoasVindas"
+        <!--  TOPO  -->
+        <Grid
             Grid.Row="0"
-            Margin="0,8,0,0"
-            IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
-            Spacing="4">
-            <Label
-                FontSize="16"
-                Text="{Binding Nome, StringFormat='Olá, {0}'}"
-                TextColor="#1B1B1B" />
-            <Label
-                FontSize="16"
-                Text="Como posso lhe ajudar hoje?"
-                TextColor="#1B1B1B" />
-        </VerticalStackLayout>
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="12">
+
+            <!--  HEADER  -->
+            <VerticalStackLayout
+                x:Name="HeaderBoasVindas"
+                Grid.Column="0"
+                Margin="0,8,0,0"
+                IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
+                Spacing="4">
+                <Label
+                    FontSize="16"
+                    Text="{Binding Nome, StringFormat='Olá, {0}'}"
+                    TextColor="#1B1B1B" />
+                <Label
+                    FontSize="16"
+                    Text="Como posso lhe ajudar hoje?"
+                    TextColor="#1B1B1B" />
+            </VerticalStackLayout>
+
+            <!--  CONTROLE DE VOZ DA IA  -->
+            <dx:DXBorder
+                Grid.Column="1"
+                Padding="10,6"
+                BackgroundColor="#dbdbdb"
+                CornerRadius="14"
+                HorizontalOptions="End"
+                IsVisible="{Binding TemMensagens}"
+                VerticalOptions="Start">
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                    <Label
+                        FontSize="13"
+                        Text="🔊"
+                        VerticalOptions="Center" />
+                    <Label
+                        FontSize="12"
+                        Text="Ouvir respostas"
+                        TextColor="#4B4B4B"
+                        VerticalOptions="Center" />
+                    <Switch
+                        IsToggled="{Binding Fala}"
+                        OnColor="#6D74E6"
+                        ThumbColor="White"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </dx:DXBorder>
+
+        </Grid>
 
         <!--  MEIO  -->
         <Grid
@@ -120,7 +155,7 @@
 
         </Grid>
 
-        <!--  INPUT: só aparece quando NÃO está escutando  -->
+        <!--  INPUT  -->
         <Grid
             Grid.Row="2"
             Margin="0,0,0,0"
@@ -152,7 +187,6 @@
                 HorizontalOptions="End"
                 VerticalOptions="Center"
                 WidthRequest="40">
-
                 <Grid>
                     <Image
                         HeightRequest="18"
@@ -165,12 +199,11 @@
                         <TapGestureRecognizer Command="{Binding EnviarTextoCommand}" />
                     </Grid.GestureRecognizers>
                 </Grid>
-
             </dx:DXBorder>
 
         </Grid>
 
-        <!--  MICROFONE PEQUENO: continua visível mesmo escutando  -->
+        <!--  MICROFONE PEQUENO  -->
         <dx:DXBorder
             Grid.Row="3"
             Margin="0,0,0,14"

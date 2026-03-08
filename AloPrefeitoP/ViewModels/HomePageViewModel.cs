@@ -13,9 +13,13 @@ namespace AloPrefeitoP.ViewModels
     {
         private readonly ISpeechToText speechToText;
         private CancellationTokenSource? cts;
+        private CancellationTokenSource? _falaCts;
 
         private readonly ISQLiteDbServive _db;
         private readonly ApiServices _api;
+
+        private bool _ultimaEntradaFoiPorVoz;
+        private bool _iaEstaFalando;
 
         public Action? ScrollToBottomRequested;
 
@@ -31,10 +35,8 @@ namespace AloPrefeitoP.ViewModels
         [ObservableProperty]
         private bool iaEstaDigitando;
 
-        //[ObservableProperty]
-        //private bool fala; 
-
-        
+        [ObservableProperty]
+        private bool fala;
 
         [ObservableProperty]
         private ObservableCollection<Mensagens> listaMensagens = new();
@@ -51,6 +53,8 @@ namespace AloPrefeitoP.ViewModels
             _db = sQLiteDbServive;
 
             speechToText = SpeechToText.Default;
+
+            Fala = Preferences.Get("fala_ativa", true);
 
             ListaMensagens.CollectionChanged += (_, __) =>
             {
@@ -73,10 +77,7 @@ namespace AloPrefeitoP.ViewModels
                         ? e.RecognitionResult.Text
                         : TextoFalado;
 
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        FinalizarEscutaUI();
-                    });
+                    MainThread.BeginInvokeOnMainThread(FinalizarEscutaUI);
 
                     if (string.IsNullOrWhiteSpace(textoFinal))
                     {
@@ -86,6 +87,8 @@ namespace AloPrefeitoP.ViewModels
                         });
                         return;
                     }
+
+                    _ultimaEntradaFoiPorVoz = true;
 
                     await EnviarMensagemFinalAsync(textoFinal);
 
@@ -108,6 +111,23 @@ namespace AloPrefeitoP.ViewModels
         partial void OnEstaEscutandoChanged(bool value)
         {
             OnPropertyChanged(nameof(NaoEstaEscutando));
+        }
+
+        partial void OnFalaChanged(bool value)
+        {
+            Preferences.Set("fala_ativa", value);
+
+            // se desligar enquanto a IA estiver falando, interrompe
+            if (!value && _iaEstaFalando)
+            {
+                try
+                {
+                    _falaCts?.Cancel();
+                }
+                catch
+                {
+                }
+            }
         }
 
         public async Task LoadChatAtualAsync()
@@ -190,10 +210,8 @@ namespace AloPrefeitoP.ViewModels
                 if (string.IsNullOrWhiteSpace(resposta))
                     resposta = "Não consegui responder agora. Tente novamente.";
 
-                if(!string.IsNullOrWhiteSpace(TextoFalado) /*&& fala == true*/)
+                if (Fala && _ultimaEntradaFoiPorVoz)
                 {
-                    TextoFalado = string.Empty;
-
                     IEnumerable<Locale> locales = await TextToSpeech.Default.GetLocalesAsync();
 
                     Locale ptBR = locales.FirstOrDefault(l =>
@@ -201,7 +219,7 @@ namespace AloPrefeitoP.ViewModels
                         l.Country.Equals("BR", StringComparison.OrdinalIgnoreCase))
                         ?? locales.FirstOrDefault();
 
-                    SpeechOptions options = new SpeechOptions()
+                    SpeechOptions options = new SpeechOptions
                     {
                         Pitch = 1.0f,
                         Volume = 1.0f,
@@ -209,10 +227,22 @@ namespace AloPrefeitoP.ViewModels
                         Locale = ptBR
                     };
 
-                    await TextToSpeech.Default.SpeakAsync(resposta, options);
+                    _falaCts?.Dispose();
+                    _falaCts = new CancellationTokenSource();
 
-
-
+                    try
+                    {
+                        _iaEstaFalando = true;
+                        await TextToSpeech.Default.SpeakAsync(resposta, options, _falaCts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // fala interrompida pelo usuário
+                    }
+                    finally
+                    {
+                        _iaEstaFalando = false;
+                    }
                 }
 
                 var msgBot = new Mensagens
@@ -256,6 +286,18 @@ namespace AloPrefeitoP.ViewModels
                     TextoFalado = string.Empty;
                 }
                 return;
+            }
+
+            // se a IA estiver falando e o usuário começar a falar, interrompe a fala
+            if (_iaEstaFalando)
+            {
+                try
+                {
+                    _falaCts?.Cancel();
+                }
+                catch
+                {
+                }
             }
 
             cts?.Dispose();
@@ -314,10 +356,11 @@ namespace AloPrefeitoP.ViewModels
                 return;
 
             var texto = MensagemDigitada.Trim();
-
             MensagemDigitada = string.Empty;
 
+            _ultimaEntradaFoiPorVoz = false;
+
             await EnviarMensagemFinalAsync(texto);
-            }
+        }
     }
 }
