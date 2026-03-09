@@ -145,6 +145,7 @@ namespace AloPrefeitoP.ViewModels
             await _db.InitializeAsync();
 
             var chatId = Preferences.Get("chat_atual", "");
+            var usuarioId = Preferences.Get("usuarioid", 0);
 
             if (string.IsNullOrWhiteSpace(chatId))
             {
@@ -156,7 +157,7 @@ namespace AloPrefeitoP.ViewModels
                 return;
             }
 
-            var msgs = await _db.GetMensagensByChatId(chatId);
+            var msgs = await _db.GetMensagensByChatId(chatId, usuarioId);
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -180,13 +181,14 @@ namespace AloPrefeitoP.ViewModels
 
                 await _db.InitializeAsync();
 
-                var ultimasPorChat = (await _db.GetChatsAgrupados()).ToList();
+                var usuarioId = Preferences.Get("usuarioid", 0);
+                var ultimasPorChat = (await _db.GetChatsAgrupados(usuarioId)).ToList();
 
                 var lista = new List<ChatResumo>();
 
                 foreach (var ultima in ultimasPorChat)
                 {
-                    var mensagens = (await _db.GetMensagensByChatId(ultima.ChatId)).ToList();
+                    var mensagens = (await _db.GetMensagensByChatId(ultima.ChatId, usuarioId)).ToList();
 
                     if (mensagens.Count == 0)
                         continue;
@@ -254,7 +256,8 @@ namespace AloPrefeitoP.ViewModels
                 Mensagem = textoUsuario,
                 Data = DateTime.Now,
                 ChatId = chatId,
-                IsBot = false
+                IsBot = false,
+                UsuarioId = userId
             };
 
             await _db.AddMensagem(msgUser);
@@ -320,7 +323,8 @@ namespace AloPrefeitoP.ViewModels
                     Mensagem = resposta,
                     Data = DateTime.Now,
                     ChatId = chatId,
-                    IsBot = true
+                    IsBot = true,
+                    UsuarioId = userId
                 };
 
                 await _db.AddMensagem(msgBot);
@@ -425,7 +429,7 @@ namespace AloPrefeitoP.ViewModels
                     if (!confirmar)
                         return;
 
-                    await _db.DeleteChatByChatId(chat.ChatId);
+                    await _db.DeleteChatByChatId(chat.ChatId, Preferences.Get("usuarioid", 0));
 
                     var chatAtual = Preferences.Get("chat_atual", "");
                     if (chatAtual == chat.ChatId)

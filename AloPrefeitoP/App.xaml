@@ -15,6 +15,7 @@
             <conv:PasswordEyeIconConverter x:Key="PasswordEyeIconConverter" />
             <conv:ChatBubbleAlignConverter x:Key="ChatBubbleAlignConverter" />
             <conv:ChatBubbleColorConverter x:Key="ChatBubbleColorConverter" />
+            <conv:TextoBuscaHighlightConverter x:Key="TextoBuscaHighlightConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

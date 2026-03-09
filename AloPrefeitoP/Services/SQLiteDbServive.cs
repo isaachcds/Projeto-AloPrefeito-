@@ -29,6 +29,7 @@ namespace ScheduleListUI.Services
 
                     await EnsureColumnExistsAsync("Mensagens", "ChatId", "TEXT", "''");
                     await EnsureColumnExistsAsync("Mensagens", "IsBot", "INTEGER", "0");
+                    await EnsureColumnExistsAsync("Mensagens", "UsuarioId", "INTEGER", "0");
                 }
             }
             catch (Exception ex)
@@ -77,29 +78,32 @@ namespace ScheduleListUI.Services
             return await _dbConnection.DeleteAsync(mensagen);
         }
 
-        public async Task<IEnumerable<Mensagens>> GetMensagem()
-        {
-            await InitializeAsync();
-            return await _dbConnection.Table<Mensagens>()
-                                      .OrderBy(x => x.Data)
-                                      .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Mensagens>> GetMensagensByChatId(string chatId)
+        public async Task<IEnumerable<Mensagens>> GetMensagem(int usuarioId)
         {
             await InitializeAsync();
 
             return await _dbConnection.Table<Mensagens>()
-                                      .Where(x => x.ChatId == chatId)
+                                      .Where(x => x.UsuarioId == usuarioId)
                                       .OrderBy(x => x.Data)
                                       .ToListAsync();
         }
 
-        public async Task<IEnumerable<Mensagens>> GetChatsAgrupados()
+        public async Task<IEnumerable<Mensagens>> GetMensagensByChatId(string chatId, int usuarioId)
+        {
+            await InitializeAsync();
+
+            return await _dbConnection.Table<Mensagens>()
+                                      .Where(x => x.ChatId == chatId && x.UsuarioId == usuarioId)
+                                      .OrderBy(x => x.Data)
+                                      .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Mensagens>> GetChatsAgrupados(int usuarioId)
         {
             await InitializeAsync();
 
             var todas = await _dbConnection.Table<Mensagens>()
+                                           .Where(x => x.UsuarioId == usuarioId)
                                            .OrderByDescending(x => x.Data)
                                            .ToListAsync();
 
@@ -109,16 +113,17 @@ namespace ScheduleListUI.Services
                         .ToList();
         }
 
-        public async Task<int> DeleteChatByChatId(string chatId)
+        public async Task<int> DeleteChatByChatId(string chatId, int usuarioId)
         {
             await InitializeAsync();
 
             return await _dbConnection.ExecuteAsync(
-                "DELETE FROM Mensagens WHERE ChatId = ?",
-                chatId);
+                "DELETE FROM Mensagens WHERE ChatId = ? AND UsuarioId = ?",
+                chatId,
+                usuarioId);
         }
 
-        public async Task<List<ChatBuscaResultado>> BuscarChatsPorPalavraChave(string termo)
+        public async Task<List<ChatBuscaResultado>> BuscarChatsPorPalavraChave(string termo, int usuarioId)
         {
             if (string.IsNullOrWhiteSpace(termo))
                 return new List<ChatBuscaResultado>();
@@ -127,23 +132,21 @@ namespace ScheduleListUI.Services
 
             var termoLower = termo.Trim().ToLowerInvariant();
 
-            var todasMensagens = await _dbConnection.Table<Mensagens>().ToListAsync();
+            var todasMensagens = await _dbConnection.Table<Mensagens>()
+                                                    .Where(x => x.UsuarioId == usuarioId)
+                                                    .ToListAsync();
 
             var mensagensEncontradas = todasMensagens
                 .Where(m => !string.IsNullOrWhiteSpace(m.Mensagem) &&
                             m.Mensagem.ToLowerInvariant().Contains(termoLower))
+                .OrderByDescending(m => m.Data)
                 .ToList();
 
             var resultados = new List<ChatBuscaResultado>();
 
-            var grupos = mensagensEncontradas
-                .Where(m => !string.IsNullOrWhiteSpace(m.ChatId))
-                .GroupBy(m => m.ChatId)
-                .ToList();
-
-            foreach (var grupo in grupos)
+            foreach (var mensagemEncontrada in mensagensEncontradas)
             {
-                var chatId = grupo.Key;
+                var chatId = mensagemEncontrada.ChatId;
 
                 var mensagensDoChat = todasMensagens
                     .Where(m => m.ChatId == chatId)
@@ -162,26 +165,24 @@ namespace ScheduleListUI.Services
                     ? tituloBase.Substring(0, 38) + "..."
                     : tituloBase;
 
-                var mensagemEncontrada = grupo
-                    .OrderByDescending(m => m.Data)
-                    .FirstOrDefault();
+                var trecho = mensagemEncontrada.Mensagem ?? string.Empty;
 
-                var trecho = mensagemEncontrada?.Mensagem ?? string.Empty;
-
-                if (trecho.Length > 90)
-                    trecho = trecho.Substring(0, 90) + "...";
+                if (trecho.Length > 120)
+                    trecho = trecho.Substring(0, 120) + "...";
 
                 resultados.Add(new ChatBuscaResultado
                 {
                     ChatId = chatId,
                     Titulo = titulo,
                     Trecho = trecho,
-                    UltimaData = mensagensDoChat.Max(m => m.Data)
+                    DataMensagem = mensagemEncontrada.Data,
+                    UltimaDataChat = mensagensDoChat.Max(m => m.Data),
+                    IsBot = mensagemEncontrada.IsBot
                 });
             }
 
             return resultados
-                .OrderByDescending(x => x.UltimaData)
+                .OrderByDescending(x => x.DataMensagem)
                 .ToList();
         }
     }
