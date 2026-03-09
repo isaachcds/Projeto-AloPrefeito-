@@ -276,7 +276,7 @@
 
             <Grid
                 Padding="20,22,20,16"
-                RowDefinitions="Auto,Auto,*"
+                RowDefinitions="Auto,Auto,Auto,*"
                 RowSpacing="14">
 
                 <!--  TOPO  -->
@@ -329,9 +329,35 @@
                     </Grid>
                 </dx:DXBorder>
 
+                <!--  BARRA DE PESQUISA  -->
+                <dx:DXBorder
+                    Grid.Row="2"
+                    Padding="14,12"
+                    BackgroundColor="White"
+                    CornerRadius="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label
+                            Grid.Column="0"
+                            FontSize="16"
+                            Text="🔍"
+                            VerticalOptions="Center" />
+
+                        <Label
+                            Grid.Column="1"
+                            FontSize="14"
+                            Text="Pesquisar conversas"
+                            TextColor="#8A8A8A"
+                            VerticalOptions="Center" />
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding IrParaBuscaCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </dx:DXBorder>
+
                 <!--  LISTA  -->
                 <CollectionView
-                    Grid.Row="2"
+                    Grid.Row="3"
                     ItemsSource="{Binding Chats}"
                     SelectionMode="None"
                     VerticalScrollBarVisibility="Never">

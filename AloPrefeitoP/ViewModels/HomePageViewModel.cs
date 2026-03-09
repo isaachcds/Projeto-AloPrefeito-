@@ -1,4 +1,5 @@
 ﻿using AloPrefeitoP.Models;
+using AloPrefeitoP.Pages;
 using AloPrefeitoP.Services;
 using CommunityToolkit.Maui.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -368,7 +369,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task NovoChat()
         {
-            Preferences.Remove("chat_atual");
+            Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -533,6 +534,13 @@ namespace AloPrefeitoP.ViewModels
             _ultimaEntradaFoiPorVoz = false;
 
             await EnviarMensagemFinalAsync(texto);
+        }
+
+        [RelayCommand]
+        private async Task IrParaBusca()
+        {
+            FecharMenu();
+            await Shell.Current.GoToAsync(nameof(BuscaChatsPage));
         }
     }
 }

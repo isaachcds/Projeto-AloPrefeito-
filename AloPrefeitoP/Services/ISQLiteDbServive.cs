@@ -17,5 +17,6 @@ namespace AloPrefeitoP.Services
         Task<IEnumerable<Mensagens>> GetMensagensByChatId(string chatId);
         Task<IEnumerable<Mensagens>> GetChatsAgrupados();
         Task<int> DeleteChatByChatId(string chatId);
+        Task<List<ChatBuscaResultado>> BuscarChatsPorPalavraChave(string termo);
     }
 }

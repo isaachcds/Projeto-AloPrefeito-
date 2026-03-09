@@ -25,10 +25,8 @@ namespace ScheduleListUI.Services
 
                     _dbConnection = new SQLiteAsyncConnection(dbPath);
 
-                    // Cria tabela se não existir
                     await _dbConnection.CreateTableAsync<Mensagens>();
 
-                    // Migração automática das colunas novas
                     await EnsureColumnExistsAsync("Mensagens", "ChatId", "TEXT", "''");
                     await EnsureColumnExistsAsync("Mensagens", "IsBot", "INTEGER", "0");
                 }
@@ -118,6 +116,73 @@ namespace ScheduleListUI.Services
             return await _dbConnection.ExecuteAsync(
                 "DELETE FROM Mensagens WHERE ChatId = ?",
                 chatId);
+        }
+
+        public async Task<List<ChatBuscaResultado>> BuscarChatsPorPalavraChave(string termo)
+        {
+            if (string.IsNullOrWhiteSpace(termo))
+                return new List<ChatBuscaResultado>();
+
+            await InitializeAsync();
+
+            var termoLower = termo.Trim().ToLowerInvariant();
+
+            var todasMensagens = await _dbConnection.Table<Mensagens>().ToListAsync();
+
+            var mensagensEncontradas = todasMensagens
+                .Where(m => !string.IsNullOrWhiteSpace(m.Mensagem) &&
+                            m.Mensagem.ToLowerInvariant().Contains(termoLower))
+                .ToList();
+
+            var resultados = new List<ChatBuscaResultado>();
+
+            var grupos = mensagensEncontradas
+                .Where(m => !string.IsNullOrWhiteSpace(m.ChatId))
+                .GroupBy(m => m.ChatId)
+                .ToList();
+
+            foreach (var grupo in grupos)
+            {
+                var chatId = grupo.Key;
+
+                var mensagensDoChat = todasMensagens
+                    .Where(m => m.ChatId == chatId)
+                    .OrderBy(m => m.Data)
+                    .ToList();
+
+                if (!mensagensDoChat.Any())
+                    continue;
+
+                var primeiraUser = mensagensDoChat
+                    .Where(m => !m.IsBot)
+                    .FirstOrDefault();
+
+                var tituloBase = primeiraUser?.Mensagem ?? "Conversa";
+                var titulo = tituloBase.Length > 38
+                    ? tituloBase.Substring(0, 38) + "..."
+                    : tituloBase;
+
+                var mensagemEncontrada = grupo
+                    .OrderByDescending(m => m.Data)
+                    .FirstOrDefault();
+
+                var trecho = mensagemEncontrada?.Mensagem ?? string.Empty;
+
+                if (trecho.Length > 90)
+                    trecho = trecho.Substring(0, 90) + "...";
+
+                resultados.Add(new ChatBuscaResultado
+                {
+                    ChatId = chatId,
+                    Titulo = titulo,
+                    Trecho = trecho,
+                    UltimaData = mensagensDoChat.Max(m => m.Data)
+                });
+            }
+
+            return resultados
+                .OrderByDescending(x => x.UltimaData)
+                .ToList();
         }
     }
 }
