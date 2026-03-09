@@ -50,6 +50,9 @@ public partial class LoginPageViewModel : ObservableObject
 
             if (!response.HasError)
             {
+                // 🔹 CRIA UM NOVO CHAT AO LOGAR
+                Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
+
                 Application.Current!.MainPage = new AppShell();
                 return;
             }

@@ -7,6 +7,7 @@ public partial class HomePage : ContentPage
 {
     private readonly HomePageViewModel _vm;
     private bool _headerJaAnimou;
+    private bool _menuAnimando;
 
     public HomePage(HomePageViewModel vm)
     {
@@ -15,13 +16,17 @@ public partial class HomePage : ContentPage
         _vm = vm;
 
         _vm.ScrollToBottomRequested += ScrollToBottom;
+        _vm.MenuStateChanged += OnMenuStateChanged;
         _vm.ListaMensagens.CollectionChanged += ListaMensagens_CollectionChanged;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
         await _vm.LoadChatAtualAsync();
+        await _vm.LoadHistoricoAsync();
+
         ScrollToBottom();
 
         if (_vm.TemMensagens)
@@ -40,7 +45,6 @@ public partial class HomePage : ContentPage
         }
     }
 
-    //Animação
     private async void ListaMensagens_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (_headerJaAnimou)
@@ -74,5 +78,46 @@ public partial class HomePage : ContentPage
         catch
         {
         }
+    }
+
+    private async void OnMenuStateChanged(bool abrir)
+    {
+        if (_menuAnimando)
+            return;
+
+        _menuAnimando = true;
+
+        try
+        {
+            if (abrir)
+            {
+                OverlayMenu.IsVisible = true;
+                OverlayMenu.InputTransparent = false;
+
+                await Task.WhenAll(
+                    OverlayMenu.FadeTo(1, 180, Easing.CubicOut),
+                    MenuLateral.TranslateTo(0, 0, 240, Easing.CubicOut)
+                );
+            }
+            else
+            {
+                await Task.WhenAll(
+                    OverlayMenu.FadeTo(0, 180, Easing.CubicIn),
+                    MenuLateral.TranslateTo(-320, 0, 220, Easing.CubicIn)
+                );
+
+                OverlayMenu.InputTransparent = true;
+                OverlayMenu.IsVisible = false;
+            }
+        }
+        finally
+        {
+            _menuAnimando = false;
+        }
+    }
+
+    private void OverlayMenu_Tapped(object sender, TappedEventArgs e)
+    {
+        _vm.FecharMenuCommand.Execute(null);
     }
 }
