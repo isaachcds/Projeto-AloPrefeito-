@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Plugin.Maui.Biometric;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AloPrefeitoP.ViewModels;
 
@@ -13,7 +12,6 @@ public partial class LoginPageViewModel : ObservableObject
     [ObservableProperty] private string email;
     [ObservableProperty] private string senha;
     [ObservableProperty] private bool isBusy;
-
     [ObservableProperty] private bool senhaVisivel;
 
     public LoginPageViewModel(ApiServices apiServices)
@@ -52,7 +50,7 @@ public partial class LoginPageViewModel : ObservableObject
 
             if (!response.HasError)
             {
-                // 🔹 CRIA UM NOVO CHAT AO LOGAR
+                Preferences.Set("usuarioemail", Email);
                 Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
 
                 Application.Current!.MainPage = new AppShell();
@@ -69,46 +67,81 @@ public partial class LoginPageViewModel : ObservableObject
         {
             IsBusy = false;
         }
-
- 
     }
 
-    public async Task LoginBiometric()
+    [RelayCommand]
+    private async Task LoginBiometric()
     {
+        if (IsBusy) return;
 
-        
-        var email = Preferences.Get("usuarioemail", string.Empty);
-
-        var result = await BiometricAuthenticationService.Default.AuthenticateAsync(new AuthenticationRequest()
+        try
         {
-            Title = "Autenticação Biométrica",
-            AllowPasswordAuth = true,
-            NegativeText = "Cancelar"
+            IsBusy = true;
 
-        }, CancellationToken.None);
+            var emailSalvo = Preferences.Get("usuarioemail", string.Empty);
 
-        var response = await _apiServices.LoginBio(email);
+            if (string.IsNullOrWhiteSpace(emailSalvo))
+            {
+                await Application.Current!.MainPage!.DisplayAlert(
+                    "Erro",
+                    "Nenhum usuário biométrico encontrado. Faça login com e-mail e senha primeiro.",
+                    "Cancelar");
+                return;
+            }
 
-        if (string.IsNullOrEmpty(email))
-        {
-            
-            await Application.Current!.MainPage!.DisplayAlert("Erro", "Nenhum usuário biométrico encontrado. Faça login com e-mail e senha primeiro.", "Cancelar");
+            var availability = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
 
+            if (availability != BiometricHwStatus.Success)
+            {
+                await Application.Current!.MainPage!.DisplayAlert(
+                    "Biometria",
+                    "A biometria não está disponível ou não está configurada neste aparelho.",
+                    "OK");
+                return;
+            }
+
+            var result = await BiometricAuthenticationService.Default.AuthenticateAsync(
+                new AuthenticationRequest
+                {
+                    Title = "Autenticação Biométrica",
+                    AllowPasswordAuth = true,
+                    NegativeText = "Cancelar"
+                },
+                CancellationToken.None);
+
+            if (result.Status != BiometricResponseStatus.Success)
+            {
+                await Application.Current!.MainPage!.DisplayAlert(
+                    "Erro",
+                    "Autenticação biométrica falhou ou foi cancelada.",
+                    "OK");
+                return;
+            }
+
+            var response = await _apiServices.LoginBio(emailSalvo);
+
+            if (!response.HasError)
+            {
+                Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
+                Application.Current!.MainPage = new AppShell();
+                return;
+            }
+
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Erro",
+                "Não foi possível autenticar com biometria.",
+                "OK");
         }
-        if (result.Status == BiometricResponseStatus.Success && !response.HasError)
+        catch (Exception ex)
         {
-            // entra no Shell
-            Application.Current!.MainPage = new AppShell();
-            return;
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Erro",
+                $"Falha na biometria: {ex.Message}",
+                "OK");
         }
-        else
+        finally
         {
-           
-            await Application.Current!.MainPage!.DisplayAlert("Erro", "Autenticação biométrica falhou", "Cancelar");
+            IsBusy = false;
         }
-
-
-
-
     }
 }

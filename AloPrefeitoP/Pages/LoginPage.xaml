@@ -63,11 +63,11 @@
                         TextColor="White" />
                     <ImageButton
                         x:Name="BtnBio"
-                        Source="touchid.png"
                         Command="{Binding LoginBiometricCommand}"
                         HeightRequest="96"
-                        WidthRequest="400"
-                        HorizontalOptions="Center" />
+                        HorizontalOptions="Center"
+                        Source="touchid.png"
+                        WidthRequest="400" />
 
                 </VerticalStackLayout>
             </dx:DXBorder>
