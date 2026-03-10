@@ -1,6 +1,8 @@
 ﻿using AloPrefeitoP.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Plugin.Maui.Biometric;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AloPrefeitoP.ViewModels;
 
@@ -67,5 +69,46 @@ public partial class LoginPageViewModel : ObservableObject
         {
             IsBusy = false;
         }
+
+ 
+    }
+
+    public async Task LoginBiometric()
+    {
+
+        
+        var email = Preferences.Get("usuarioemail", string.Empty);
+
+        var result = await BiometricAuthenticationService.Default.AuthenticateAsync(new AuthenticationRequest()
+        {
+            Title = "Autenticação Biométrica",
+            AllowPasswordAuth = true,
+            NegativeText = "Cancelar"
+
+        }, CancellationToken.None);
+
+        var response = await _apiServices.LoginBio(email);
+
+        if (string.IsNullOrEmpty(email))
+        {
+            
+            await Application.Current!.MainPage!.DisplayAlert("Erro", "Nenhum usuário biométrico encontrado. Faça login com e-mail e senha primeiro.", "Cancelar");
+
+        }
+        if (result.Status == BiometricResponseStatus.Success && !response.HasError)
+        {
+            // entra no Shell
+            Application.Current!.MainPage = new AppShell();
+            return;
+        }
+        else
+        {
+           
+            await Application.Current!.MainPage!.DisplayAlert("Erro", "Autenticação biométrica falhou", "Cancelar");
+        }
+
+
+
+
     }
 }

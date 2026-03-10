@@ -10,9 +10,10 @@ namespace AloPrefeitoP
         public App(ApiServices apiServices)
         {
             InitializeComponent();
+            _services = apiServices;
             Application.Current.UserAppTheme = AppTheme.Light;
             var vm = new LoginPageViewModel(apiServices);
-            var page = new LoginPage(vm);
+            var page = new LoginPage( _services);
             MainPage = new NavigationPage(page);
         }
     }

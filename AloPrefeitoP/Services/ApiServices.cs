@@ -64,7 +64,40 @@ namespace AloPrefeitoP.Services
         }
 
 
+        public async Task<ApiResponse<bool>> LoginBio(string email)
+        {
+            try
+            {
+                // _httpClient.DefaultRequestHeaders.Add("X-CORS-APP-IACARE", "iacare");
+                var login = new Usuario() { VusuDsEmail = email };
 
+                var json = JsonSerializer.Serialize(login, _serializerOptions);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await PostRequest("api/Usuarios/Login", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Erro ao enviar requisição HTTP :{response.StatusCode}");
+                    return new ApiResponse<bool> { ErrorMessage = $"Erro ao enviar requisição HTTP :{response.StatusCode}" };
+                }
+                //Ler o conteúdo da resposta HTTP como uma string de forma assíncrona.
+                var jsonResult = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<Token>(jsonResult, _serializerOptions);
+
+                //Armazena dados do token
+                Preferences.Set("accesstoken", result.Accesstoken ?? "");
+                Preferences.Set("usuarioid", result.UsuarioId ?? 0);
+                Preferences.Set("usuarionome", result.UsuarioNome ?? "");
+                Preferences.Set("usuarioemail", result.UsuarioEmail ?? "");
+                Preferences.Set("tokenexpiration", result.Expiration ?? DateTime.MinValue);
+                return new ApiResponse<bool> { Data = true };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro no login : {ex.Message}");
+                return new ApiResponse<bool> { ErrorMessage = ex.Message };
+            }
+        }
 
         private async Task<HttpResponseMessage> PostRequest(string uri, HttpContent content)
         {
