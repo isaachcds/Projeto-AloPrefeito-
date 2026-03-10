@@ -5,229 +5,470 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
     xmlns:lottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-    Title="Início"
+    xmlns:models="clr-namespace:AloPrefeitoP.Models"
+    x:Name="HomeRoot"
     BackgroundColor="WhiteSmoke">
 
-    <Grid
-        Padding="22"
-        RowDefinitions="Auto,*,Auto,Auto"
-        RowSpacing="12">
+    <Grid>
 
-        <!--  TOPO  -->
+        <!--  CONTEÚDO PRINCIPAL  -->
         <Grid
-            Grid.Row="0"
-            ColumnDefinitions="*,Auto"
-            ColumnSpacing="12">
+            Padding="22"
+            RowDefinitions="Auto,*,Auto,Auto"
+            RowSpacing="12">
 
-            <!--  HEADER  -->
-            <VerticalStackLayout
-                x:Name="HeaderBoasVindas"
-                Grid.Column="0"
-                Margin="0,8,0,0"
-                IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
-                Spacing="4">
-                <Label
-                    FontSize="16"
-                    Text="{Binding Nome, StringFormat='Olá, {0}'}"
-                    TextColor="#1B1B1B" />
-                <Label
-                    FontSize="16"
-                    Text="Como posso lhe ajudar hoje?"
-                    TextColor="#1B1B1B" />
-            </VerticalStackLayout>
+            <!--  TOPO  -->
+            <Grid
+                Grid.Row="0"
+                ColumnDefinitions="Auto,*,Auto"
+                ColumnSpacing="12">
 
-            <!--  CONTROLE DE VOZ DA IA  -->
-            <dx:DXBorder
-                Grid.Column="1"
-                Padding="10,6"
-                BackgroundColor="#dbdbdb"
-                CornerRadius="14"
-                HorizontalOptions="End"
-                IsVisible="{Binding TemMensagens}"
-                VerticalOptions="Start">
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                <!--  BOTÃO HAMBURGUER  -->
+                <dx:DXBorder
+                    Grid.Column="0"
+                    Padding="10"
+                    BackgroundColor="White"
+                    CornerRadius="14"
+                    HeightRequest="44"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="44">
+                    <Grid>
+                        <Label
+                            FontSize="20"
+                            HorizontalOptions="Center"
+                            Text="☰"
+                            TextColor="#1B1B1B"
+                            VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AlternarMenuCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </dx:DXBorder>
+
+                <!--  HEADER  -->
+                <VerticalStackLayout
+                    x:Name="HeaderBoasVindas"
+                    Grid.Column="1"
+                    Margin="0,8,0,0"
+                    IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
+                    Spacing="4">
+                    <Label
+                        FontSize="16"
+                        Text="{Binding Nome, StringFormat='Olá, {0}'}"
+                        TextColor="#1B1B1B" />
+                    <Label
+                        FontSize="16"
+                        Text="Como posso lhe ajudar hoje?"
+                        TextColor="#1B1B1B" />
+                </VerticalStackLayout>
+
+                <!--  CONTROLE DE VOZ DA IA  -->
+                <dx:DXBorder
+                    Grid.Column="2"
+                    Padding="10,6"
+                    BackgroundColor="#dbdbdb"
+                    CornerRadius="14"
+                    HorizontalOptions="End"
+                    IsVisible="{Binding TemMensagens}"
+                    VerticalOptions="Start">
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <Label
+                            FontSize="13"
+                            Text="🔊"
+                            VerticalOptions="Center" />
+                        <Label
+                            FontSize="12"
+                            Text="Ouvir respostas"
+                            TextColor="#4B4B4B"
+                            VerticalOptions="Center" />
+                        <Switch
+                            IsToggled="{Binding Fala}"
+                            OnColor="#6D74E6"
+                            ThumbColor="White"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </dx:DXBorder>
+            </Grid>
+
+            <!--  MEIO  -->
+            <Grid
+                Grid.Row="1"
+                RowDefinitions="*,Auto,Auto,Auto"
+                RowSpacing="14">
+
+                <!--  LISTA DO CHAT  -->
+                <CollectionView
+                    x:Name="ChatList"
+                    Grid.Row="0"
+                    ItemsSource="{Binding ListaMensagens}"
+                    SelectionMode="None">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Frame
+                                    Margin="0,6"
+                                    Padding="12"
+                                    BackgroundColor="{Binding IsBot, Converter={StaticResource ChatBubbleColorConverter}}"
+                                    CornerRadius="14"
+                                    HasShadow="False"
+                                    HorizontalOptions="{Binding IsBot, Converter={StaticResource ChatBubbleAlignConverter}}">
+                                    <Label
+                                        FontSize="14"
+                                        Text="{Binding Mensagem}"
+                                        TextColor="#1B1B1B" />
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--  IA está digitando  -->
+                <dx:DXBorder
+                    Grid.Row="1"
+                    Padding="12,8"
+                    BackgroundColor="White"
+                    CornerRadius="14"
+                    HorizontalOptions="Start"
+                    IsVisible="{Binding IaEstaDigitando}">
                     <Label
                         FontSize="13"
-                        Text="🔊"
-                        VerticalOptions="Center" />
+                        Text="Alô Prefeito está digitando..."
+                        TextColor="#6F6F6F" />
+                </dx:DXBorder>
+
+                <!--  TRANSCRIÇÃO  -->
+                <dx:DXBorder
+                    Grid.Row="2"
+                    Padding="12,10"
+                    BackgroundColor="#EAF7F7"
+                    CornerRadius="14"
+                    HorizontalOptions="Fill"
+                    IsVisible="{Binding EstaEscutando}">
                     <Label
-                        FontSize="12"
-                        Text="Ouvir respostas"
-                        TextColor="#4B4B4B"
-                        VerticalOptions="Center" />
-                    <Switch
-                        IsToggled="{Binding Fala}"
-                        OnColor="#6D74E6"
-                        ThumbColor="White"
-                        VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </dx:DXBorder>
+                        FontSize="14"
+                        Text="{Binding TextoFalado}"
+                        TextColor="#1B1B1B" />
+                </dx:DXBorder>
 
-        </Grid>
+                <!--  MICROFONE GRANDE  -->
+                <dx:DXBorder
+                    Grid.Row="3"
+                    Padding="0"
+                    BackgroundColor="#6D74E6"
+                    CornerRadius="85"
+                    HeightRequest="170"
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
+                    VerticalOptions="Center"
+                    WidthRequest="170">
+                    <Grid>
+                        <lottie:SKLottieView
+                            HeightRequest="120"
+                            HorizontalOptions="Center"
+                            IsAnimationEnabled="{Binding EstaEscutando}"
+                            RepeatCount="-1"
+                            Source="microphone.json"
+                            VerticalOptions="Center"
+                            WidthRequest="120">
+                            <lottie:SKLottieView.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleEscutaCommand}" />
+                            </lottie:SKLottieView.GestureRecognizers>
+                        </lottie:SKLottieView>
+                    </Grid>
+                </dx:DXBorder>
+            </Grid>
 
-        <!--  MEIO  -->
-        <Grid
-            Grid.Row="1"
-            RowDefinitions="*,Auto,Auto,Auto"
-            RowSpacing="14">
-
-            <!--  LISTA DO CHAT  -->
-            <CollectionView
-                x:Name="ChatList"
-                Grid.Row="0"
-                ItemsSource="{Binding ListaMensagens}"
-                SelectionMode="None">
-
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Frame
-                                Margin="0,6"
-                                Padding="12"
-                                BackgroundColor="{Binding IsBot, Converter={StaticResource ChatBubbleColorConverter}}"
-                                CornerRadius="14"
-                                HasShadow="False"
-                                HorizontalOptions="{Binding IsBot, Converter={StaticResource ChatBubbleAlignConverter}}">
-                                <Label
-                                    FontSize="14"
-                                    Text="{Binding Mensagem}"
-                                    TextColor="#1B1B1B" />
-                            </Frame>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <!--  IA está digitando  -->
-            <dx:DXBorder
-                Grid.Row="1"
-                Padding="12,8"
-                BackgroundColor="White"
-                CornerRadius="14"
-                HorizontalOptions="Start"
-                IsVisible="{Binding IaEstaDigitando}">
-                <Label
-                    FontSize="13"
-                    Text="Alô Prefeito está digitando..."
-                    TextColor="#6F6F6F" />
-            </dx:DXBorder>
-
-            <!--  TRANSCRIÇÃO  -->
-            <dx:DXBorder
+            <!--  INPUT  -->
+            <Grid
                 Grid.Row="2"
-                Padding="12,10"
-                BackgroundColor="#EAF7F7"
-                CornerRadius="14"
-                HorizontalOptions="Fill"
-                IsVisible="{Binding EstaEscutando}">
-                <Label
-                    FontSize="14"
-                    Text="{Binding TextoFalado}"
-                    TextColor="#1B1B1B" />
-            </dx:DXBorder>
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="10"
+                IsVisible="{Binding NaoEstaEscutando}">
 
-            <!--  MICROFONE GRANDE: só antes do chat começar  -->
+                <dx:DXBorder
+                    Grid.Column="0"
+                    Padding="14,10"
+                    BackgroundColor="#E7E7E7"
+                    CornerRadius="14">
+                    <Entry
+                        BackgroundColor="Transparent"
+                        FontSize="14"
+                        Placeholder="Digite sua mensagem..."
+                        PlaceholderColor="#6F6F6F"
+                        ReturnCommand="{Binding EnviarTextoCommand}"
+                        ReturnType="Send"
+                        Text="{Binding MensagemDigitada}"
+                        TextColor="#1B1B1B" />
+                </dx:DXBorder>
+
+                <dx:DXBorder
+                    Grid.Column="1"
+                    BackgroundColor="#6D74E6"
+                    CornerRadius="20"
+                    HeightRequest="40"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    WidthRequest="40">
+                    <Grid>
+                        <Image
+                            HeightRequest="18"
+                            HorizontalOptions="Center"
+                            Source="send.png"
+                            VerticalOptions="Center"
+                            WidthRequest="18" />
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EnviarTextoCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </dx:DXBorder>
+            </Grid>
+
+            <!--  MICROFONE PEQUENO  -->
             <dx:DXBorder
                 Grid.Row="3"
-                Padding="0"
+                Margin="0,0,0,14"
                 BackgroundColor="#6D74E6"
-                CornerRadius="85"
-                HeightRequest="170"
+                CornerRadius="42"
+                HeightRequest="84"
                 HorizontalOptions="Center"
-                IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}"
-                VerticalOptions="Center"
-                WidthRequest="170">
+                IsVisible="{Binding TemMensagens}"
+                WidthRequest="84">
                 <Grid>
                     <lottie:SKLottieView
-                        HeightRequest="120"
+                        HeightRequest="56"
                         HorizontalOptions="Center"
                         IsAnimationEnabled="{Binding EstaEscutando}"
                         RepeatCount="-1"
                         Source="microphone.json"
                         VerticalOptions="Center"
-                        WidthRequest="120">
+                        WidthRequest="56">
                         <lottie:SKLottieView.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ToggleEscutaCommand}" />
                         </lottie:SKLottieView.GestureRecognizers>
                     </lottie:SKLottieView>
                 </Grid>
             </dx:DXBorder>
-
         </Grid>
 
-        <!--  INPUT  -->
+        <!--  OVERLAY ESCURO  -->
         <Grid
-            Grid.Row="2"
-            Margin="0,0,0,0"
-            ColumnDefinitions="*,Auto"
-            ColumnSpacing="10"
-            IsVisible="{Binding NaoEstaEscutando}">
-
-            <dx:DXBorder
-                Grid.Column="0"
-                Padding="14,10"
-                BackgroundColor="#E7E7E7"
-                CornerRadius="14">
-                <Entry
-                    BackgroundColor="Transparent"
-                    FontSize="14"
-                    Placeholder="Digite sua mensagem..."
-                    PlaceholderColor="#6F6F6F"
-                    ReturnCommand="{Binding EnviarTextoCommand}"
-                    ReturnType="Send"
-                    Text="{Binding MensagemDigitada}"
-                    TextColor="#1B1B1B" />
-            </dx:DXBorder>
-
-            <dx:DXBorder
-                Grid.Column="1"
-                BackgroundColor="#6D74E6"
-                CornerRadius="20"
-                HeightRequest="40"
-                HorizontalOptions="End"
-                VerticalOptions="Center"
-                WidthRequest="40">
-                <Grid>
-                    <Image
-                        HeightRequest="18"
-                        HorizontalOptions="Center"
-                        Source="send.png"
-                        VerticalOptions="Center"
-                        WidthRequest="18" />
-
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding EnviarTextoCommand}" />
-                    </Grid.GestureRecognizers>
-                </Grid>
-            </dx:DXBorder>
-
+            x:Name="OverlayMenu"
+            BackgroundColor="#80000000"
+            InputTransparent="True"
+            IsVisible="False"
+            Opacity="0">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OverlayMenu_Tapped" />
+            </Grid.GestureRecognizers>
         </Grid>
 
-        <!--  MICROFONE PEQUENO  -->
-        <dx:DXBorder
-            Grid.Row="3"
-            Margin="0,0,0,14"
-            BackgroundColor="#6D74E6"
-            CornerRadius="42"
-            HeightRequest="84"
-            HorizontalOptions="Center"
-            IsVisible="{Binding TemMensagens}"
-            WidthRequest="84">
-            <Grid>
-                <lottie:SKLottieView
-                    HeightRequest="56"
-                    HorizontalOptions="Center"
-                    IsAnimationEnabled="{Binding EstaEscutando}"
-                    RepeatCount="-1"
-                    Source="microphone.json"
-                    VerticalOptions="Center"
-                    WidthRequest="56">
-                    <lottie:SKLottieView.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ToggleEscutaCommand}" />
-                    </lottie:SKLottieView.GestureRecognizers>
-                </lottie:SKLottieView>
+        <!--  MENU LATERAL  -->
+        <Grid
+            x:Name="MenuLateral"
+            BackgroundColor="#F5F5F7"
+            HorizontalOptions="Start"
+            TranslationX="-320"
+            WidthRequest="320"
+            ZIndex="10">
+
+            <Grid
+                Padding="20,22,20,16"
+                RowDefinitions="Auto,Auto,Auto,*"
+                RowSpacing="14">
+
+                <!--  TOPO  -->
+                <VerticalStackLayout Grid.Row="0" Spacing="4">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        Text="Histórico"
+                        TextColor="#1B1B1B" />
+                    <Label
+                        FontSize="13"
+                        Text="Acesse conversas anteriores ou inicie um novo chat."
+                        TextColor="#6F6F6F" />
+                </VerticalStackLayout>
+
+                <!--  BOTÃO NOVO CHAT  -->
+                <dx:DXBorder
+                    Grid.Row="1"
+                    Padding="0"
+                    BackgroundColor="#6D74E6"
+                    CornerRadius="16"
+                    HeightRequest="50">
+
+                    <Grid>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NovoChatCommand}" />
+                        </Grid.GestureRecognizers>
+
+                        <Grid
+                            Padding="16,0"
+                            ColumnDefinitions="Auto,*"
+                            ColumnSpacing="10">
+
+                            <Label
+                                Grid.Column="0"
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                Text="+"
+                                TextColor="White"
+                                VerticalOptions="Center" />
+
+                            <Label
+                                Grid.Column="1"
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="Novo chat"
+                                TextColor="White"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Grid>
+                </dx:DXBorder>
+
+                <!--  BARRA DE PESQUISA  -->
+                <dx:DXBorder
+                    Grid.Row="2"
+                    Padding="14,12"
+                    BackgroundColor="White"
+                    CornerRadius="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label
+                            Grid.Column="0"
+                            FontSize="16"
+                            Text="🔍"
+                            VerticalOptions="Center" />
+
+                        <Label
+                            Grid.Column="1"
+                            FontSize="14"
+                            Text="Pesquisar conversas"
+                            TextColor="#8A8A8A"
+                            VerticalOptions="Center" />
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding IrParaBuscaCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </dx:DXBorder>
+
+                <!--  LISTA  -->
+                <CollectionView
+                    Grid.Row="3"
+                    ItemsSource="{Binding Chats}"
+                    SelectionMode="None"
+                    VerticalScrollBarVisibility="Never">
+
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout
+                            Padding="20,40"
+                            HorizontalOptions="Center"
+                            Spacing="10"
+                            VerticalOptions="Center">
+                            <Label
+                                FontSize="18"
+                                HorizontalTextAlignment="Center"
+                                Text="💬" />
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="16"
+                                HorizontalTextAlignment="Center"
+                                Text="Nenhuma conversa ainda"
+                                TextColor="#1B1B1B" />
+                            <Label
+                                FontSize="13"
+                                HorizontalTextAlignment="Center"
+                                Text="Quando você iniciar um chat, ele aparecerá aqui."
+                                TextColor="#6F6F6F" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ChatResumo">
+                            <Grid Margin="0,0,0,12">
+
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={x:Reference HomeRoot}, Path=BindingContext.AbrirChatCommand}" CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+
+                                <dx:DXBorder
+                                    Padding="14"
+                                    BackgroundColor="White"
+                                    CornerRadius="18">
+
+                                    <Grid
+                                        ColumnDefinitions="Auto,*,Auto"
+                                        ColumnSpacing="12"
+                                        RowDefinitions="Auto,Auto">
+
+                                        <dx:DXBorder
+                                            Grid.RowSpan="2"
+                                            BackgroundColor="#6D74E6"
+                                            CornerRadius="5"
+                                            HeightRequest="10"
+                                            VerticalOptions="Center"
+                                            WidthRequest="10" />
+
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            FontAttributes="Bold"
+                                            FontSize="14"
+                                            LineBreakMode="TailTruncation"
+                                            MaxLines="1"
+                                            Text="{Binding Titulo}"
+                                            TextColor="#1B1B1B" />
+
+                                        <Grid
+                                            Grid.Row="0"
+                                            Grid.Column="2"
+                                            ColumnDefinitions="Auto,Auto"
+                                            ColumnSpacing="8"
+                                            VerticalOptions="Center">
+
+                                            <Label
+                                                Grid.Column="0"
+                                                FontSize="12"
+                                                Text="{Binding UltimaDataTexto}"
+                                                TextColor="#8A8A8A"
+                                                VerticalOptions="Center" />
+
+                                            <ImageButton
+                                                Grid.Column="1"
+                                                Padding="0"
+                                                BackgroundColor="Transparent"
+                                                Command="{Binding Source={x:Reference HomeRoot}, Path=BindingContext.MostrarOpcoesCommand}"
+                                                CommandParameter="{Binding .}"
+                                                HeightRequest="28"
+                                                WidthRequest="28">
+                                                <ImageButton.Source>
+                                                    <FontImageSource
+                                                        Glyph="⋮"
+                                                        Size="18"
+                                                        Color="#6F6F6F" />
+                                                </ImageButton.Source>
+                                            </ImageButton>
+                                        </Grid>
+
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            FontSize="12"
+                                            Text="Toque para abrir esta conversa"
+                                            TextColor="#6F6F6F" />
+                                    </Grid>
+                                </dx:DXBorder>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
             </Grid>
-        </dx:DXBorder>
+        </Grid>
 
     </Grid>
 </ContentPage>

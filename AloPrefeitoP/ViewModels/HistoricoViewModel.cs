@@ -31,13 +31,17 @@ namespace AloPrefeitoP.ViewModels
 
                 await _db.InitializeAsync();
 
-                var ultimasPorChat = (await _db.GetChatsAgrupados()).ToList();
+                var usuarioId = Preferences.Get("usuarioid", 0);
+                var ultimasPorChat = (await _db.GetChatsAgrupados(usuarioId)).ToList();
 
                 var lista = new List<ChatResumo>();
 
                 foreach (var ultima in ultimasPorChat)
                 {
-                    var mensagens = (await _db.GetMensagensByChatId(ultima.ChatId)).ToList();
+                    var mensagens = (await _db.GetMensagensByChatId(ultima.ChatId, usuarioId)).ToList();
+
+                    if (mensagens.Count == 0)
+                        continue;
 
                     var primeiraUser = mensagens
                         .Where(m => !m.IsBot)
@@ -70,7 +74,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task NovoChat()
         {
-            Preferences.Remove("chat_atual");
+            Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
             await Shell.Current.GoToAsync("//Home");
         }
 
@@ -113,9 +117,8 @@ namespace AloPrefeitoP.ViewModels
                     if (!confirmar)
                         return;
 
-                    await _db.DeleteChatByChatId(chat.ChatId);
+                    await _db.DeleteChatByChatId(chat.ChatId, Preferences.Get("usuarioid", 0));
 
-                    // se a conversa excluída era a atual, limpa a preferência
                     var chatAtual = Preferences.Get("chat_atual", "");
                     if (chatAtual == chat.ChatId)
                         Preferences.Remove("chat_atual");

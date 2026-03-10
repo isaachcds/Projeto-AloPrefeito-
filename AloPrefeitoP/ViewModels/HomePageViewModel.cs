@@ -1,4 +1,5 @@
 ﻿using AloPrefeitoP.Models;
+using AloPrefeitoP.Pages;
 using AloPrefeitoP.Services;
 using CommunityToolkit.Maui.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -22,6 +23,7 @@ namespace AloPrefeitoP.ViewModels
         private bool _iaEstaFalando;
 
         public Action? ScrollToBottomRequested;
+        public Action<bool>? MenuStateChanged;
 
         [ObservableProperty]
         private string textoFalado = string.Empty;
@@ -39,7 +41,16 @@ namespace AloPrefeitoP.ViewModels
         private bool fala;
 
         [ObservableProperty]
+        private bool menuAberto;
+
+        [ObservableProperty]
+        private bool isBusyHistorico;
+
+        [ObservableProperty]
         private ObservableCollection<Mensagens> listaMensagens = new();
+
+        [ObservableProperty]
+        private ObservableCollection<ChatResumo> chats = new();
 
         public string Nome => Preferences.Get("usuarionome", string.Empty);
 
@@ -117,7 +128,6 @@ namespace AloPrefeitoP.ViewModels
         {
             Preferences.Set("fala_ativa", value);
 
-            // se desligar enquanto a IA estiver falando, interrompe
             if (!value && _iaEstaFalando)
             {
                 try
@@ -135,6 +145,7 @@ namespace AloPrefeitoP.ViewModels
             await _db.InitializeAsync();
 
             var chatId = Preferences.Get("chat_atual", "");
+            var usuarioId = Preferences.Get("usuarioid", 0);
 
             if (string.IsNullOrWhiteSpace(chatId))
             {
@@ -146,7 +157,7 @@ namespace AloPrefeitoP.ViewModels
                 return;
             }
 
-            var msgs = await _db.GetMensagensByChatId(chatId);
+            var msgs = await _db.GetMensagensByChatId(chatId, usuarioId);
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -157,6 +168,65 @@ namespace AloPrefeitoP.ViewModels
 
                 ScrollToBottomRequested?.Invoke();
             });
+        }
+
+        public async Task LoadHistoricoAsync()
+        {
+            if (IsBusyHistorico)
+                return;
+
+            try
+            {
+                IsBusyHistorico = true;
+
+                await _db.InitializeAsync();
+
+                var usuarioId = Preferences.Get("usuarioid", 0);
+                var ultimasPorChat = (await _db.GetChatsAgrupados(usuarioId)).ToList();
+
+                var lista = new List<ChatResumo>();
+
+                foreach (var ultima in ultimasPorChat)
+                {
+                    var mensagens = (await _db.GetMensagensByChatId(ultima.ChatId, usuarioId)).ToList();
+
+                    if (mensagens.Count == 0)
+                        continue;
+
+                    var primeiraUser = mensagens
+                        .Where(m => !m.IsBot)
+                        .OrderBy(m => m.Data)
+                        .FirstOrDefault();
+
+                    var tituloBase = primeiraUser?.Mensagem ?? "Conversa";
+                    var titulo = tituloBase.Length > 38
+                        ? tituloBase.Substring(0, 38) + "..."
+                        : tituloBase;
+
+                    lista.Add(new ChatResumo
+                    {
+                        ChatId = ultima.ChatId,
+                        Titulo = titulo,
+                        UltimaData = mensagens.Max(m => m.Data)
+                    });
+                }
+
+                lista = lista
+                    .OrderByDescending(x => x.UltimaData)
+                    .ToList();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Chats.Clear();
+
+                    foreach (var c in lista)
+                        Chats.Add(c);
+                });
+            }
+            finally
+            {
+                IsBusyHistorico = false;
+            }
         }
 
         private string GetOrCreateChatAtual()
@@ -186,7 +256,8 @@ namespace AloPrefeitoP.ViewModels
                 Mensagem = textoUsuario,
                 Data = DateTime.Now,
                 ChatId = chatId,
-                IsBot = false
+                IsBot = false,
+                UsuarioId = userId
             };
 
             await _db.AddMensagem(msgUser);
@@ -196,6 +267,8 @@ namespace AloPrefeitoP.ViewModels
                 ListaMensagens.Add(msgUser);
                 ScrollToBottomRequested?.Invoke();
             });
+
+            await LoadHistoricoAsync();
 
             try
             {
@@ -237,7 +310,6 @@ namespace AloPrefeitoP.ViewModels
                     }
                     catch (OperationCanceledException)
                     {
-                        // fala interrompida pelo usuário
                     }
                     finally
                     {
@@ -251,7 +323,8 @@ namespace AloPrefeitoP.ViewModels
                     Mensagem = resposta,
                     Data = DateTime.Now,
                     ChatId = chatId,
-                    IsBot = true
+                    IsBot = true,
+                    UsuarioId = userId
                 };
 
                 await _db.AddMensagem(msgBot);
@@ -261,6 +334,8 @@ namespace AloPrefeitoP.ViewModels
                     ListaMensagens.Add(msgBot);
                     ScrollToBottomRequested?.Invoke();
                 });
+
+                await LoadHistoricoAsync();
             }
             finally
             {
@@ -268,6 +343,109 @@ namespace AloPrefeitoP.ViewModels
                 {
                     IaEstaDigitando = false;
                 });
+            }
+        }
+
+        [RelayCommand]
+        private void AlternarMenu()
+        {
+            if (MenuAberto)
+                FecharMenu();
+            else
+                AbrirMenu();
+        }
+
+        [RelayCommand]
+        private async Task AbrirMenu()
+        {
+            MenuAberto = true;
+            await LoadHistoricoAsync();
+            MenuStateChanged?.Invoke(true);
+        }
+
+        [RelayCommand]
+        public void FecharMenu()
+        {
+            MenuAberto = false;
+            MenuStateChanged?.Invoke(false);
+        }
+
+        [RelayCommand]
+        private async Task NovoChat()
+        {
+            Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ListaMensagens.Clear();
+                OnPropertyChanged(nameof(TemMensagens));
+                ScrollToBottomRequested?.Invoke();
+            });
+
+            await LoadHistoricoAsync();
+            FecharMenu();
+        }
+
+        [RelayCommand]
+        private async Task AbrirChat(ChatResumo chat)
+        {
+            if (chat == null)
+                return;
+
+            Preferences.Set("chat_atual", chat.ChatId);
+
+            await LoadChatAtualAsync();
+            await LoadHistoricoAsync();
+
+            FecharMenu();
+        }
+
+        [RelayCommand]
+        private async Task MostrarOpcoes(ChatResumo chat)
+        {
+            if (chat == null)
+                return;
+
+            var acao = await Shell.Current.DisplayActionSheet(
+                "Conversa",
+                "Cancelar",
+                null,
+                "Abrir",
+                "Excluir");
+
+            switch (acao)
+            {
+                case "Abrir":
+                    await AbrirChat(chat);
+                    break;
+
+                case "Excluir":
+                    var confirmar = await Shell.Current.DisplayAlert(
+                        "Excluir conversa",
+                        "Deseja realmente excluir esta conversa?",
+                        "Excluir",
+                        "Cancelar");
+
+                    if (!confirmar)
+                        return;
+
+                    await _db.DeleteChatByChatId(chat.ChatId, Preferences.Get("usuarioid", 0));
+
+                    var chatAtual = Preferences.Get("chat_atual", "");
+                    if (chatAtual == chat.ChatId)
+                    {
+                        Preferences.Remove("chat_atual");
+
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            ListaMensagens.Clear();
+                            OnPropertyChanged(nameof(TemMensagens));
+                            ScrollToBottomRequested?.Invoke();
+                        });
+                    }
+
+                    await LoadHistoricoAsync();
+                    break;
             }
         }
 
@@ -288,7 +466,6 @@ namespace AloPrefeitoP.ViewModels
                 return;
             }
 
-            // se a IA estiver falando e o usuário começar a falar, interrompe a fala
             if (_iaEstaFalando)
             {
                 try
@@ -361,6 +538,13 @@ namespace AloPrefeitoP.ViewModels
             _ultimaEntradaFoiPorVoz = false;
 
             await EnviarMensagemFinalAsync(texto);
+        }
+
+        [RelayCommand]
+        private async Task IrParaBusca()
+        {
+            FecharMenu();
+            await Shell.Current.GoToAsync(nameof(BuscaChatsPage));
         }
     }
 }

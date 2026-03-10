@@ -8,6 +8,7 @@ namespace AloPrefeitoP.Models
     public class Mensagens
     {
         [Key]
+        public int Id { get; set; }
         public int MensagensId { get; set; }
         public string Nome { get; set; }
         public string Mensagem { get; set; }
@@ -19,5 +20,6 @@ namespace AloPrefeitoP.Models
         // Diferencia usuário x IA para bolhas
         // false = usuário | true = IA
         public bool IsBot { get; set; }
+        public int UsuarioId { get; set; }          
     }
 }
