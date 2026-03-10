@@ -73,7 +73,7 @@ namespace AloPrefeitoP.Services
 
                 var json = JsonSerializer.Serialize(login, _serializerOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await PostRequest("api/Usuarios/Login", content);
+                var response = await PostRequest("api/Usuarios/LoginBiometria", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
