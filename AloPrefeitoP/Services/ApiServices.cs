@@ -13,7 +13,7 @@ namespace AloPrefeitoP.Services
     {
         private readonly HttpClient _httpClient;
        private static string _baseUrl = "https://apiagente.iaintelligence.com.br/"; //produção
-       //private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/"; //teste
+      // private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/"; //teste
 
         private readonly ILogger<ApiServices> _logger;
         JsonSerializerOptions _serializerOptions;
@@ -63,6 +63,27 @@ namespace AloPrefeitoP.Services
             }
         }
 
+
+        public async Task<ApiResponse<bool>> ResetPassWord(string email)
+        {
+            try
+            {
+                // _httpClient.DefaultRequestHeaders.Add("X-CORS-APP-IACARE", "iacare");
+                var login = new Usuario() { VusuDsEmail = email};
+
+                var json = JsonSerializer.Serialize(login, _serializerOptions);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await PostRequest("api/Usuarios/SolicitarRedefinicaoSenha", content);
+
+                
+                return new ApiResponse<bool> { Data = true };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro no login : {ex.Message}");
+                return new ApiResponse<bool> { ErrorMessage = ex.Message };
+            }
+        }
 
         public async Task<ApiResponse<bool>> LoginBio(string email)
         {
