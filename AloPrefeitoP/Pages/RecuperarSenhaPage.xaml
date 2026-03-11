@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AloPrefeitoP.Pages.RecuperarSenhaPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dx="http://schemas.devexpress.com/maui"
+    Title="Recuperar senha"
+    BackgroundColor="#F5F6FA">
+
+    <Grid>
+        <VerticalStackLayout
+            Padding="24"
+            Spacing="18"
+            VerticalOptions="Center">
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="24"
+                Text="Recuperar senha" />
+
+            <Label Text="Informe seu e-mail para receber as instruções de redefinição." TextColor="Gray" />
+
+            <dx:DXBorder
+                Padding="16"
+                BackgroundColor="White"
+                CornerRadius="14">
+
+                <VerticalStackLayout Spacing="12">
+                    <Entry
+                        Keyboard="Email"
+                        Placeholder="Seu e-mail"
+                        Text="{Binding Email}"
+                        TextColor="Black" />
+
+                    <Button
+                        BackgroundColor="#5B6CF0"
+                        Command="{Binding EnviarRecuperacaoCommand}"
+                        Text="Enviar recuperação"
+                        TextColor="White" />
+
+                    <!--<Button
+                        BackgroundColor="Transparent"
+                        Command="{Binding VoltarCommand}"
+                        Text="Voltar"
+                        TextColor="#5B6CF0" />-->
+                </VerticalStackLayout>
+            </dx:DXBorder>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

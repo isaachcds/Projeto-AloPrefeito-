@@ -84,7 +84,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\RecuperarSenhaPage.xaml.cs">
+	    <DependentUpon>RecuperarSenhaPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\BuscaChatsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\RecuperarSenhaPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\HistoricoPage.xaml">
