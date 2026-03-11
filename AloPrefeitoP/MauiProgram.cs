@@ -44,6 +44,10 @@ namespace AloPrefeitoP
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<BuscaChatsPage>();
             builder.Services.AddTransient<BuscaChatsViewModel>();
+            builder.Services.AddTransient<ConfigPage>();
+            builder.Services.AddTransient<ConfigViewModel>();
+            builder.Services.AddTransient<HistoricoPage>();
+            builder.Services.AddTransient<HistoricoViewModel>();
             return builder.Build();
         }
     }

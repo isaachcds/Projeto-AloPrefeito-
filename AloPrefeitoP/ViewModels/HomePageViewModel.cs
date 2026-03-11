@@ -21,6 +21,7 @@ namespace AloPrefeitoP.ViewModels
 
         private bool _ultimaEntradaFoiPorVoz;
         private bool _iaEstaFalando;
+        private List<ChatResumo> _todosChats = new();
 
         public Action? ScrollToBottomRequested;
         public Action<bool>? MenuStateChanged;
@@ -57,6 +58,8 @@ namespace AloPrefeitoP.ViewModels
         public bool NaoEstaEscutando => !EstaEscutando;
 
         public bool TemMensagens => ListaMensagens?.Count > 0;
+
+        public bool TemMaisDeTresChats => _todosChats.Count > 3;
 
         public HomePageViewModel(ApiServices apiServices, ISQLiteDbServive sQLiteDbServive)
         {
@@ -211,7 +214,7 @@ namespace AloPrefeitoP.ViewModels
                     });
                 }
 
-                lista = lista
+                _todosChats = lista
                     .OrderByDescending(x => x.UltimaData)
                     .ToList();
 
@@ -219,8 +222,10 @@ namespace AloPrefeitoP.ViewModels
                 {
                     Chats.Clear();
 
-                    foreach (var c in lista)
+                    foreach (var c in _todosChats.Take(3))
                         Chats.Add(c);
+
+                    OnPropertyChanged(nameof(TemMaisDeTresChats));
                 });
             }
             finally
@@ -545,6 +550,38 @@ namespace AloPrefeitoP.ViewModels
         {
             FecharMenu();
             await Shell.Current.GoToAsync(nameof(BuscaChatsPage));
+        }
+
+        [RelayCommand]
+        private async Task IrParaHistorico()
+        {
+            FecharMenu();
+            await Shell.Current.GoToAsync(nameof(HistoricoPage));
+        }
+
+        [RelayCommand]
+        private async Task AbrirConfiguracoes()
+        {
+            FecharMenu();
+            await Shell.Current.GoToAsync(nameof(ConfigPage));
+        }
+
+        [RelayCommand]
+        private async Task ConfirmarLogoff()
+        {
+            bool confirmar = await Application.Current.MainPage.DisplayAlert(
+                "Sair",
+                "Deseja realmente sair da sua conta?",
+                "Sim",
+                "Cancelar");
+
+            if (!confirmar)
+                return;
+
+            FecharMenu();
+            Preferences.Remove("chat_atual");
+
+            await Shell.Current.GoToAsync(nameof(LoginPage));
         }
     }
 }
