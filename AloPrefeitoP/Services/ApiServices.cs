@@ -75,7 +75,7 @@ namespace AloPrefeitoP.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await PostRequest("api/Usuarios/SolicitarRedefinicaoSenha", content);
 
-                
+              
                 return new ApiResponse<bool> { Data = true };
             }
             catch (Exception ex)

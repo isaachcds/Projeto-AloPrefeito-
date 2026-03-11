@@ -16,7 +16,6 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
-
     protected override async void OnAppearing()
     {
         base.OnAppearing();
