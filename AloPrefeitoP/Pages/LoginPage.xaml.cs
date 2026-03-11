@@ -8,6 +8,7 @@ public partial class LoginPage : ContentPage
 {
     private readonly LoginPageViewModel vm;
     private readonly ApiServices _services;
+    private bool _jaInicializou;
     public LoginPage(ApiServices services)
     {
         _services = services;
@@ -16,6 +17,12 @@ public partial class LoginPage : ContentPage
         BindingContext = vm;
     }
 
-  
-
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        if (_jaInicializou)
+            return;
+        _jaInicializou = true;
+        await vm.InicializarAsync();
     }
+}

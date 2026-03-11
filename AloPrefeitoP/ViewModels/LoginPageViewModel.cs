@@ -20,10 +20,9 @@ public partial class LoginPageViewModel : ObservableObject
     public LoginPageViewModel(ApiServices apiServices)
     {
         _apiServices = apiServices;
-        _ = InicializarAsync();
     }
 
-    private async Task InicializarAsync()
+    public async Task InicializarAsync()
     {
         await VerificarBiometriaAsync();
         await TentarLoginAutomaticoComBiometriaAsync();
@@ -69,7 +68,6 @@ public partial class LoginPageViewModel : ObservableObject
         }
         catch
         {
-            // evita quebrar a tela caso a biometria automática falhe
         }
     }
 
@@ -106,8 +104,9 @@ public partial class LoginPageViewModel : ObservableObject
             {
                 Preferences.Set("usuarioemail", Email);
                 Preferences.Set("usuario_salvo", true);
-                Preferences.Set("biometria_ativada", true); // por enquanto já deixa habilitado
                 Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
+
+                await PerguntarAtivacaoBiometriaAsync();
 
                 Application.Current!.MainPage = new AppShell();
                 return;
@@ -125,6 +124,48 @@ public partial class LoginPageViewModel : ObservableObject
         }
     }
 
+    private async Task PerguntarAtivacaoBiometriaAsync()
+    {
+        try
+        {
+            var jaConfigurada = Preferences.Get("biometria_ativada", false);
+            if (jaConfigurada)
+                return;
+
+            var status = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
+
+            if (status != BiometricHwStatus.Success)
+                return;
+
+            var desejaAtivar = await Application.Current!.MainPage!.DisplayAlert(
+                "Ativar biometria",
+                "Deseja usar biometria nos próximos acessos?",
+                "Sim",
+                "Agora não");
+
+            if (!desejaAtivar)
+            {
+                Preferences.Set("biometria_ativada", false);
+                return;
+            }
+
+            var result = await BiometricAuthenticationService.Default.AuthenticateAsync(
+                new AuthenticationRequest
+                {
+                    Title = "Confirmar ativação da biometria",
+                    AllowPasswordAuth = true,
+                    NegativeText = "Cancelar"
+                },
+                CancellationToken.None);
+
+            Preferences.Set("biometria_ativada", result.Status == BiometricResponseStatus.Success);
+        }
+        catch
+        {
+            Preferences.Set("biometria_ativada", false);
+        }
+    }
+
     [RelayCommand]
     private async Task LoginBiometric()
     {
@@ -137,24 +178,12 @@ public partial class LoginPageViewModel : ObservableObject
             var emailSalvo = Preferences.Get("usuarioemail", string.Empty);
 
             if (string.IsNullOrWhiteSpace(emailSalvo))
-            {
-                await Application.Current!.MainPage!.DisplayAlert(
-                    "Erro",
-                    "Nenhum usuário salvo foi encontrado. Faça login com e-mail e senha primeiro.",
-                    "OK");
                 return;
-            }
 
             var availability = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
 
             if (availability != BiometricHwStatus.Success)
-            {
-                await Application.Current!.MainPage!.DisplayAlert(
-                    "Biometria",
-                    $"Biometria indisponível no dispositivo.\nStatus: {availability}",
-                    "OK");
                 return;
-            }
 
             var result = await BiometricAuthenticationService.Default.AuthenticateAsync(
                 new AuthenticationRequest
