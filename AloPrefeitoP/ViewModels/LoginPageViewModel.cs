@@ -1,4 +1,5 @@
-﻿using AloPrefeitoP.Services;
+﻿using AloPrefeitoP.Pages;
+using AloPrefeitoP.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Plugin.Maui.Biometric;
@@ -13,10 +14,61 @@ public partial class LoginPageViewModel : ObservableObject
     [ObservableProperty] private string senha;
     [ObservableProperty] private bool isBusy;
     [ObservableProperty] private bool senhaVisivel;
+    [ObservableProperty] private bool temBiometria;
+    [ObservableProperty] private bool exibirBotaoBiometria;
 
     public LoginPageViewModel(ApiServices apiServices)
     {
         _apiServices = apiServices;
+    }
+
+    public async Task InicializarAsync()
+    {
+        await VerificarBiometriaAsync();
+        await TentarLoginAutomaticoComBiometriaAsync();
+    }
+
+    private async Task VerificarBiometriaAsync()
+    {
+        try
+        {
+            var status = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
+
+            TemBiometria = status == BiometricHwStatus.Success;
+
+            var usuarioSalvo = Preferences.Get("usuario_salvo", false);
+            var biometriaAtivada = Preferences.Get("biometria_ativada", false);
+
+            ExibirBotaoBiometria = TemBiometria && usuarioSalvo && biometriaAtivada;
+        }
+        catch
+        {
+            TemBiometria = false;
+            ExibirBotaoBiometria = false;
+        }
+    }
+
+    private async Task TentarLoginAutomaticoComBiometriaAsync()
+    {
+        try
+        {
+            var usuarioSalvo = Preferences.Get("usuario_salvo", false);
+            var biometriaAtivada = Preferences.Get("biometria_ativada", false);
+            var emailSalvo = Preferences.Get("usuarioemail", string.Empty);
+
+            if (!usuarioSalvo || !biometriaAtivada || string.IsNullOrWhiteSpace(emailSalvo))
+                return;
+
+            var status = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
+
+            if (status != BiometricHwStatus.Success)
+                return;
+
+            await LoginBiometric();
+        }
+        catch
+        {
+        }
     }
 
     [RelayCommand]
@@ -51,7 +103,10 @@ public partial class LoginPageViewModel : ObservableObject
             if (!response.HasError)
             {
                 Preferences.Set("usuarioemail", Email);
+                Preferences.Set("usuario_salvo", true);
                 Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
+
+                await PerguntarAtivacaoBiometriaAsync();
 
                 Application.Current!.MainPage = new AppShell();
                 return;
@@ -69,6 +124,48 @@ public partial class LoginPageViewModel : ObservableObject
         }
     }
 
+    private async Task PerguntarAtivacaoBiometriaAsync()
+    {
+        try
+        {
+            var jaConfigurada = Preferences.Get("biometria_ativada", false);
+            if (jaConfigurada)
+                return;
+
+            var status = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
+
+            if (status != BiometricHwStatus.Success)
+                return;
+
+            var desejaAtivar = await Application.Current!.MainPage!.DisplayAlert(
+                "Ativar biometria",
+                "Deseja usar biometria nos próximos acessos?",
+                "Sim",
+                "Agora não");
+
+            if (!desejaAtivar)
+            {
+                Preferences.Set("biometria_ativada", false);
+                return;
+            }
+
+            var result = await BiometricAuthenticationService.Default.AuthenticateAsync(
+                new AuthenticationRequest
+                {
+                    Title = "Confirmar ativação da biometria",
+                    AllowPasswordAuth = true,
+                    NegativeText = "Cancelar"
+                },
+                CancellationToken.None);
+
+            Preferences.Set("biometria_ativada", result.Status == BiometricResponseStatus.Success);
+        }
+        catch
+        {
+            Preferences.Set("biometria_ativada", false);
+        }
+    }
+
     [RelayCommand]
     private async Task LoginBiometric()
     {
@@ -81,24 +178,12 @@ public partial class LoginPageViewModel : ObservableObject
             var emailSalvo = Preferences.Get("usuarioemail", string.Empty);
 
             if (string.IsNullOrWhiteSpace(emailSalvo))
-            {
-                await Application.Current!.MainPage!.DisplayAlert(
-                    "Erro",
-                    "Nenhum usuário biométrico encontrado. Faça login com e-mail e senha primeiro.",
-                    "Cancelar");
                 return;
-            }
 
             var availability = await BiometricAuthenticationService.Default.GetAuthenticationStatusAsync();
 
             if (availability != BiometricHwStatus.Success)
-            {
-                await Application.Current!.MainPage!.DisplayAlert(
-                    "Biometria",
-                    "A biometria não está disponível ou não está configurada neste aparelho.",
-                    "OK");
                 return;
-            }
 
             var result = await BiometricAuthenticationService.Default.AuthenticateAsync(
                 new AuthenticationRequest
@@ -110,13 +195,7 @@ public partial class LoginPageViewModel : ObservableObject
                 CancellationToken.None);
 
             if (result.Status != BiometricResponseStatus.Success)
-            {
-                await Application.Current!.MainPage!.DisplayAlert(
-                    "Erro",
-                    "Autenticação biométrica falhou ou foi cancelada.",
-                    "OK");
                 return;
-            }
 
             var response = await _apiServices.LoginBio(emailSalvo);
 
@@ -143,5 +222,12 @@ public partial class LoginPageViewModel : ObservableObject
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task IrParaRecuperarSenha()
+    {
+        await Application.Current!.MainPage!.Navigation.PushAsync(
+            new RecuperarSenhaPage(_apiServices));
     }
 }

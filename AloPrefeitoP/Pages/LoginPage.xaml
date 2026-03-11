@@ -4,37 +4,40 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui">
-    <Grid>
+
+    <Grid BackgroundColor="#F5F6FA">
         <VerticalStackLayout
             Padding="30"
             HorizontalOptions="Center"
             Spacing="20"
             VerticalOptions="Center"
             WidthRequest="320">
+
             <VerticalStackLayout HorizontalOptions="Center" Spacing="6">
                 <Label
                     FontAttributes="Bold"
                     FontSize="24"
                     HorizontalTextAlignment="Center"
                     Text="Alô Prefeito" />
+
                 <Label
                     FontSize="14"
                     HorizontalTextAlignment="Center"
                     Text="Entre na sua conta"
                     TextColor="Gray" />
-
             </VerticalStackLayout>
 
             <dx:DXBorder
                 Padding="20"
                 BackgroundColor="White"
                 CornerRadius="12">
+
                 <VerticalStackLayout Spacing="15">
                     <Entry
                         Keyboard="Email"
                         Placeholder="Email"
                         Text="{Binding Email}"
-                        TextColor="black" />
+                        TextColor="Black" />
 
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                         <Entry
@@ -42,7 +45,7 @@
                             IsPassword="{Binding SenhaVisivel, Converter={StaticResource InverseBoolConverter}}"
                             Placeholder="Senha"
                             Text="{Binding Senha}"
-                            TextColor="black" />
+                            TextColor="Black" />
 
                         <ImageButton
                             Grid.Column="1"
@@ -61,14 +64,23 @@
                         HeightRequest="45"
                         Text="Entrar"
                         TextColor="White" />
+
                     <ImageButton
                         x:Name="BtnBio"
+                        BackgroundColor="Transparent"
                         Command="{Binding LoginBiometricCommand}"
                         HeightRequest="96"
                         HorizontalOptions="Center"
+                        IsVisible="{Binding ExibirBotaoBiometria}"
                         Source="touchid.png"
                         WidthRequest="400" />
 
+                    <Button
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Command="{Binding IrParaRecuperarSenhaCommand}"
+                        Text="Esqueci minha senha"
+                        TextColor="#5B6CF0" />
                 </VerticalStackLayout>
             </dx:DXBorder>
         </VerticalStackLayout>

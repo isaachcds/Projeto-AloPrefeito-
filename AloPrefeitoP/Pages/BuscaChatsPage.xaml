@@ -86,7 +86,7 @@
                         FontAttributes="Bold"
                         FontSize="13"
                         Text="Por conversa"
-                        TextColor="White" />
+                        TextColor="Black" />
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding AgruparConversaCommand}" />
                     </Grid.GestureRecognizers>
@@ -102,7 +102,7 @@
                         FontAttributes="Bold"
                         FontSize="13"
                         Text="Por data"
-                        TextColor="White" />
+                        TextColor="Black" />
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding AgruparDataCommand}" />
                     </Grid.GestureRecognizers>

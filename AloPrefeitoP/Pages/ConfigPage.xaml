@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AloPrefeitoP.Pages.ConfigPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dx="http://schemas.devexpress.com/maui"
+    Title="Configurações"
+    BackgroundColor="WhiteSmoke">
+
+    <Grid
+        Padding="22"
+        RowDefinitions="Auto,*,Auto"
+        RowSpacing="18">
+
+        <!--  TOPO  -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="12">
+
+            <dx:DXButton
+                Grid.Column="0"
+                ButtonType="ToolButton"
+                Command="{Binding VoltarCommand}"
+                Content="←"
+                HeightRequest="44"
+                WidthRequest="44" />
+
+            <Label
+                Grid.Column="1"
+                FontAttributes="Bold"
+                FontSize="20"
+                Text="Configurações"
+                TextColor="#1B1B1B"
+                VerticalOptions="Center" />
+        </Grid>
+
+        <!--  CONTEÚDO  -->
+        <VerticalStackLayout Grid.Row="1" Spacing="14">
+
+            <dx:DXButton
+                ButtonType="Filled"
+                Command="{Binding AlterarSenhaCommand}"
+                Content="Alterar senha"
+                HeightRequest="54"
+                HorizontalOptions="Fill"
+                Icon="password.svg"
+                IconHeight="20"
+                IconIndent="12"
+                IconWidth="20" />
+
+            <dx:DXButton
+                ButtonType="Filled"
+                Command="{Binding SobreCommand}"
+                Content="Sobre"
+                HeightRequest="54"
+                HorizontalOptions="Fill"
+                Icon="info.svg"
+                IconHeight="20"
+                IconIndent="12"
+                IconWidth="20" />
+
+            <dx:DXButton
+                ButtonType="Filled"
+                Command="{Binding SuporteCommand}"
+                Content="Nosso suporte"
+                HeightRequest="54"
+                HorizontalOptions="Fill"
+                Icon="support.svg"
+                IconHeight="20"
+                IconIndent="12"
+                IconWidth="20"
+                TextHorizontalAlignment="Center" />
+
+            <dx:DXButton
+                ButtonType="Outlined"
+                Command="{Binding SairCommand}"
+                Content="Sair da conta"
+                HeightRequest="54"
+                HorizontalOptions="Fill"
+                Icon="logoff.svg"
+                IconHeight="20"
+                IconIndent="12"
+                IconWidth="20" />
+        </VerticalStackLayout>
+
+        <!--  RODAPÉ  -->
+        <Label
+            Grid.Row="2"
+            FontSize="12"
+            HorizontalOptions="Center"
+            Text="Versão 1.0"
+            TextColor="#6F6F6F" />
+
+    </Grid>
+</ContentPage>
