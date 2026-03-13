@@ -61,6 +61,20 @@ namespace AloPrefeitoP.ViewModels
 
         public bool TemMaisDeTresChats => _todosChats.Count > 3;
 
+        public string AudioIcon => Fala ? "audio_icon.svg" : "audio_off_icon.svg";
+
+        public string MicrofoneIcon => EstaEscutando
+            ? "microphone_icon_white.svg"
+            : "microphone_icon.svg";
+
+        public Color MicrofoneBackground => EstaEscutando
+            ? Color.FromArgb("#5B63E6")
+            : Colors.Transparent;
+
+        public Color SendButtonBackground => string.IsNullOrWhiteSpace(MensagemDigitada)
+            ? Color.FromArgb("#A9C9D6")
+            : Color.FromArgb("#5B63E6");
+
         public HomePageViewModel(ApiServices apiServices, ISQLiteDbServive sQLiteDbServive)
         {
             _api = apiServices;
@@ -83,41 +97,18 @@ namespace AloPrefeitoP.ViewModels
                 });
             };
 
-            speechToText.RecognitionResultCompleted += async (_, e) =>
+            speechToText.RecognitionResultCompleted += (_, e) =>
             {
                 try
                 {
-                    var textoFinal = e.RecognitionResult.IsSuccessful
-                        ? e.RecognitionResult.Text
-                        : TextoFalado;
-
-                    MainThread.BeginInvokeOnMainThread(FinalizarEscutaUI);
-
-                    if (string.IsNullOrWhiteSpace(textoFinal))
-                    {
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            TextoFalado = string.Empty;
-                        });
-                        return;
-                    }
-
-                    _ultimaEntradaFoiPorVoz = true;
-
-                    await EnviarMensagemFinalAsync(textoFinal);
-
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        TextoFalado = string.Empty;
+                        if (e.RecognitionResult.IsSuccessful && !string.IsNullOrWhiteSpace(e.RecognitionResult.Text))
+                            TextoFalado = e.RecognitionResult.Text;
                     });
                 }
                 catch
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        FinalizarEscutaUI();
-                        TextoFalado = string.Empty;
-                    });
                 }
             };
         }
@@ -125,11 +116,19 @@ namespace AloPrefeitoP.ViewModels
         partial void OnEstaEscutandoChanged(bool value)
         {
             OnPropertyChanged(nameof(NaoEstaEscutando));
+            OnPropertyChanged(nameof(MicrofoneBackground));
+            OnPropertyChanged(nameof(MicrofoneIcon));
+        }
+
+        partial void OnMensagemDigitadaChanged(string value)
+        {
+            OnPropertyChanged(nameof(SendButtonBackground));
         }
 
         partial void OnFalaChanged(bool value)
         {
             Preferences.Set("fala_ativa", value);
+            OnPropertyChanged(nameof(AudioIcon));
 
             if (!value && _iaEstaFalando)
             {
@@ -357,7 +356,7 @@ namespace AloPrefeitoP.ViewModels
             if (MenuAberto)
                 FecharMenu();
             else
-                AbrirMenu();
+                AbrirMenuCommand.Execute(null);
         }
 
         [RelayCommand]
@@ -406,56 +405,7 @@ namespace AloPrefeitoP.ViewModels
         }
 
         [RelayCommand]
-        private async Task MostrarOpcoes(ChatResumo chat)
-        {
-            if (chat == null)
-                return;
-
-            var acao = await Shell.Current.DisplayActionSheet(
-                "Conversa",
-                "Cancelar",
-                null,
-                "Abrir",
-                "Excluir");
-
-            switch (acao)
-            {
-                case "Abrir":
-                    await AbrirChat(chat);
-                    break;
-
-                case "Excluir":
-                    var confirmar = await Shell.Current.DisplayAlert(
-                        "Excluir conversa",
-                        "Deseja realmente excluir esta conversa?",
-                        "Excluir",
-                        "Cancelar");
-
-                    if (!confirmar)
-                        return;
-
-                    await _db.DeleteChatByChatId(chat.ChatId, Preferences.Get("usuarioid", 0));
-
-                    var chatAtual = Preferences.Get("chat_atual", "");
-                    if (chatAtual == chat.ChatId)
-                    {
-                        Preferences.Remove("chat_atual");
-
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            ListaMensagens.Clear();
-                            OnPropertyChanged(nameof(TemMensagens));
-                            ScrollToBottomRequested?.Invoke();
-                        });
-                    }
-
-                    await LoadHistoricoAsync();
-                    break;
-            }
-        }
-
-        [RelayCommand]
-        private async Task ToggleEscuta()
+        private async Task ToggleEscutaManual()
         {
             if (EstaEscutando)
             {
@@ -465,9 +415,22 @@ namespace AloPrefeitoP.ViewModels
                 }
                 catch
                 {
-                    FinalizarEscutaUI();
-                    TextoFalado = string.Empty;
                 }
+
+                FinalizarEscutaUI();
+
+                var textoFinal = TextoFalado?.Trim();
+
+                if (string.IsNullOrWhiteSpace(textoFinal))
+                {
+                    TextoFalado = string.Empty;
+                    return;
+                }
+
+                _ultimaEntradaFoiPorVoz = true;
+                TextoFalado = string.Empty;
+
+                await EnviarMensagemFinalAsync(textoFinal);
                 return;
             }
 
