@@ -14,6 +14,7 @@ namespace AloPrefeitoP
             Routing.RegisterRoute(nameof(BuscaChatsPage), typeof(BuscaChatsPage));
             Routing.RegisterRoute(nameof(HistoricoPage), typeof(HistoricoPage));
             Routing.RegisterRoute(nameof(ConfigPage), typeof(ConfigPage));
+            Routing.RegisterRoute(nameof(PerfilPage), typeof(PerfilPage));
         }
     }
 }

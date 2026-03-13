@@ -583,5 +583,12 @@ namespace AloPrefeitoP.ViewModels
 
             await Shell.Current.GoToAsync(nameof(LoginPage));
         }
+
+        [RelayCommand]
+        private async Task AbrirPerfil()
+        {
+            FecharMenu();
+            await Shell.Current.GoToAsync(nameof(PerfilPage));
+        }
     }
 }

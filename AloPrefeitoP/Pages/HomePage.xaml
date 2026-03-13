@@ -63,32 +63,63 @@
                         TextColor="#1B1B1B" />
                 </VerticalStackLayout>
 
-                <!--  CONTROLE DE VOZ DA IA  -->
-                <dx:DXBorder
+                <!--  PERFIL + CONTROLE DE VOZ  -->
+                <VerticalStackLayout
                     Grid.Column="2"
-                    Padding="10,6"
-                    BackgroundColor="#dbdbdb"
-                    CornerRadius="14"
                     HorizontalOptions="End"
-                    IsVisible="{Binding TemMensagens}"
+                    Spacing="8"
                     VerticalOptions="Start">
-                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                        <Label
-                            FontSize="13"
-                            Text="🔊"
-                            VerticalOptions="Center" />
-                        <Label
-                            FontSize="12"
-                            Text="Ouvir respostas"
-                            TextColor="#4B4B4B"
-                            VerticalOptions="Center" />
-                        <Switch
-                            IsToggled="{Binding Fala}"
-                            OnColor="#6D74E6"
-                            ThumbColor="White"
-                            VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </dx:DXBorder>
+
+                    <!--  BOTÃO DE PERFIL  -->
+                    <dx:DXBorder
+                        Padding="0"
+                        BackgroundColor="White"
+                        CornerRadius="22"
+                        HeightRequest="44"
+                        HorizontalOptions="End"
+                        VerticalOptions="Start"
+                        WidthRequest="44">
+                        <Grid>
+                            <Image
+                                HeightRequest="20"
+                                HorizontalOptions="Center"
+                                Source="profile.svg"
+                                VerticalOptions="Center"
+                                WidthRequest="20" />
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AbrirPerfilCommand}" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </dx:DXBorder>
+
+                    <!--  CONTROLE DE VOZ DA IA  -->
+                    <dx:DXBorder
+                        Padding="10,6"
+                        BackgroundColor="#dbdbdb"
+                        CornerRadius="14"
+                        HorizontalOptions="End"
+                        IsVisible="{Binding TemMensagens}"
+                        VerticalOptions="Start">
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                            <Label
+                                FontSize="13"
+                                Text="🔊"
+                                VerticalOptions="Center" />
+                            <Label
+                                FontSize="12"
+                                Text="Ouvir respostas"
+                                TextColor="#4B4B4B"
+                                VerticalOptions="Center" />
+                            <Switch
+                                IsToggled="{Binding Fala}"
+                                OnColor="#6D74E6"
+                                ThumbColor="White"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </dx:DXBorder>
+
+                </VerticalStackLayout>
             </Grid>
 
             <!--  MEIO  -->
@@ -299,7 +330,6 @@
                     Command="{Binding NovoChatCommand}"
                     Content="Novo chat"
                     HeightRequest="50" />
-
 
                 <!--  BUSCA  -->
                 <dx:DXBorder

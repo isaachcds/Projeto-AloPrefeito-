@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AloPrefeitoP.Pages.PerfilPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dx="http://schemas.devexpress.com/maui"
+    Title="Perfil"
+    BackgroundColor="WhiteSmoke">
+
+    <ScrollView>
+        <Grid Padding="22">
+            <VerticalStackLayout Spacing="26">
+
+                <!-- TOPO -->
+                <Grid ColumnDefinitions="Auto,*">
+                    <dx:DXButton
+                        Grid.Column="0"
+                        ButtonType="ToolButton"
+                        Command="{Binding VoltarCommand}"
+                        HeightRequest="44"
+                        WidthRequest="44" />
+                </Grid>
+
+                <!-- FOTO + NOME -->
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="10">
+
+                    <Grid
+                        HeightRequest="110"
+                        WidthRequest="110">
+
+                        <Frame
+                            Padding="0"
+                            BackgroundColor="White"
+                            BorderColor="#D9D9D9"
+                            CornerRadius="55"
+                            HasShadow="False"
+                            HeightRequest="110"
+                            WidthRequest="110"
+                            IsClippedToBounds="True">
+
+                            <Image
+                                Aspect="AspectFill"
+                                Source="{Binding FotoPerfil}" />
+                        </Frame>
+
+                        <dx:DXBorder
+                            Padding="6"
+                            BackgroundColor="White"
+                            CornerRadius="14"
+                            HeightRequest="30"
+                            HorizontalOptions="End"
+                            VerticalOptions="End"
+                            WidthRequest="30">
+                            <Grid>
+                                <Image
+                                    HeightRequest="16"
+                                    HorizontalOptions="Center"
+                                    Source="edit.svg"
+                                    VerticalOptions="Center"
+                                    WidthRequest="16" />
+
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding AlterarFotoCommand}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </dx:DXBorder>
+                    </Grid>
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding NomeExibicao, StringFormat='Olá, {0}!'}"
+                        TextColor="#1B1B1B" />
+
+                    <Label
+                        FontSize="17"
+                        Text="Meu Perfil"
+                        TextColor="#1B1B1B" />
+                </VerticalStackLayout>
+
+                <!-- E-MAIL -->
+                <dx:DXBorder
+                    Padding="16"
+                    BackgroundColor="#8DC6E0"
+                    CornerRadius="16">
+                    <Grid
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="14">
+
+                        <Label
+                            Grid.Column="0"
+                            FontSize="22"
+                            Text="✉"
+                            VerticalOptions="Center" />
+
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="2"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="E-mail"
+                                TextColor="#1B1B1B" />
+                            <Label
+                                FontSize="15"
+                                Text="{Binding Email}"
+                                TextColor="#1B1B1B" />
+                        </VerticalStackLayout>
+
+                        <Image
+                            Grid.Column="2"
+                            HeightRequest="18"
+                            Source="edit.svg"
+                            VerticalOptions="Center"
+                            WidthRequest="18">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditarEmailCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                    </Grid>
+                </dx:DXBorder>
+
+                <!-- TELEFONE -->
+                <dx:DXBorder
+                    Padding="16"
+                    BackgroundColor="#8DC6E0"
+                    CornerRadius="16">
+                    <Grid
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="14">
+
+                        <Label
+                            Grid.Column="0"
+                            FontSize="22"
+                            Text="📞"
+                            VerticalOptions="Center" />
+
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="2"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="Telefone"
+                                TextColor="#1B1B1B" />
+                            <Label
+                                FontSize="15"
+                                Text="{Binding Telefone}"
+                                TextColor="#1B1B1B" />
+                        </VerticalStackLayout>
+
+                        <Image
+                            Grid.Column="2"
+                            HeightRequest="18"
+                            Source="edit.svg"
+                            VerticalOptions="Center"
+                            WidthRequest="18">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditarTelefoneCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                    </Grid>
+                </dx:DXBorder>
+
+                <!-- ENDEREÇO -->
+                <dx:DXBorder
+                    Padding="16"
+                    BackgroundColor="#8DC6E0"
+                    CornerRadius="16">
+                    <Grid
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="14">
+
+                        <Label
+                            Grid.Column="0"
+                            FontSize="22"
+                            Text="📍"
+                            VerticalOptions="Center" />
+
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="2"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="Endereço"
+                                TextColor="#1B1B1B" />
+                            <Label
+                                FontSize="15"
+                                Text="{Binding Endereco}"
+                                TextColor="#1B1B1B" />
+                        </VerticalStackLayout>
+
+                        <Image
+                            Grid.Column="2"
+                            HeightRequest="18"
+                            Source="edit.svg"
+                            VerticalOptions="Center"
+                            WidthRequest="18">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditarEnderecoCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+                    </Grid>
+                </dx:DXBorder>
+
+                <!-- BOTÃO VOLTAR -->
+                <dx:DXButton
+                    ButtonType="Accent"
+                    Command="{Binding VoltarCommand}"
+                    Content="Voltar"
+                    HeightRequest="46"
+                    HorizontalOptions="Center"
+                    WidthRequest="140" />
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

@@ -48,6 +48,8 @@ namespace AloPrefeitoP
             builder.Services.AddTransient<ConfigViewModel>();
             builder.Services.AddTransient<HistoricoPage>();
             builder.Services.AddTransient<HistoricoViewModel>();
+            builder.Services.AddTransient<PerfilViewModel>();
+            builder.Services.AddTransient<PerfilPage>();
             return builder.Build();
         }
     }
