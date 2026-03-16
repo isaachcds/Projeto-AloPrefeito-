@@ -200,11 +200,13 @@
 
                 <!--  BOTÃO VOLTAR  -->
                 <dx:DXButton
+                    BackgroundColor="#8DC6E0"
                     ButtonType="Accent"
                     Command="{Binding VoltarCommand}"
                     Content="Voltar"
                     HeightRequest="46"
                     HorizontalOptions="Center"
+                    TextColor="Black"
                     WidthRequest="140" />
 
             </VerticalStackLayout>
