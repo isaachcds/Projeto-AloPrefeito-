@@ -12,8 +12,8 @@ namespace AloPrefeitoP.Services
     public class ApiServices
     {
         private readonly HttpClient _httpClient;
-       private static string _baseUrl = "https://apiagente.iaintelligence.com.br/"; //produção
-      // private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/"; //teste
+      // private static string _baseUrl = "https://apiagente.iaintelligence.com.br/"; //produção
+       private static string _baseUrl = "https://wt8c4018-7117.brs.devtunnels.ms/"; //teste
 
         private readonly ILogger<ApiServices> _logger;
         JsonSerializerOptions _serializerOptions;
@@ -154,6 +154,37 @@ namespace AloPrefeitoP.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> GetModuloAgent( int id)
+        {
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.None)
+                return string.Empty;
+
+            var url = $"{_baseUrl}api/SupporteAloPreito/{id}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+
+        public async Task<string> ChatBotResponse(string menssage, string status, int UserId, string systemID)
+        {
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.None)
+                return string.Empty;
+
+
+            var url = $"{_baseUrl}api/SuporteSystems/System_MVC_Agents?Mensagem={menssage}&Status={status}&UserID={UserId}&System={systemID}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
+
+            return await response.Content.ReadAsStringAsync();
+        }
 
         private void AddAuthorizationHeader()
         {

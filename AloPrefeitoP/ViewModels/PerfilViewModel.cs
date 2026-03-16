@@ -80,7 +80,7 @@ namespace AloPrefeitoP.ViewModels
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert(
+                await Shell.Current.DisplayAlertAsync(
                     "Erro",
                     $"Não foi possível alterar a foto.\n\n{ex.Message}",
                     "OK");

@@ -56,7 +56,7 @@ public partial class AlterarSenhaViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(NovaSenha))
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 "Informe a nova senha.",
                 "OK");
@@ -65,7 +65,7 @@ public partial class AlterarSenhaViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(ConfirmarSenha))
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 "Confirme a nova senha.",
                 "OK");
@@ -74,7 +74,7 @@ public partial class AlterarSenhaViewModel : ObservableObject
 
         if (NovaSenha != ConfirmarSenha)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 "As senhas não conferem.",
                 "OK");
@@ -92,7 +92,7 @@ public partial class AlterarSenhaViewModel : ObservableObject
             // Enquanto o endpoint final não foi passado:
             await Task.Delay(500);
 
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Sucesso",
                 "Senha alterada com sucesso.",
                 "OK");
@@ -101,7 +101,7 @@ public partial class AlterarSenhaViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 $"Falha ao alterar senha: {ex.Message}",
                 "OK");

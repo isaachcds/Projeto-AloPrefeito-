@@ -84,13 +84,13 @@ public partial class LoginPageViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Email))
         {
-            await Application.Current!.MainPage!.DisplayAlert("Erro", "Informe o email", "Cancelar");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "Informe o email", "Cancelar");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Senha))
         {
-            await Application.Current!.MainPage!.DisplayAlert("Erro", "Informe a senha", "Cancelar");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "Informe a senha", "Cancelar");
             return;
         }
 
@@ -99,6 +99,10 @@ public partial class LoginPageViewModel : ObservableObject
             IsBusy = true;
 
             var response = await _apiServices.Login(Email, Senha);
+
+            string menssage = "oi"; string status = "021"; int UserId = 5; string systemID = "017";
+            var te = _apiServices.GetModuloAgent(UserId);
+            var teste = _apiServices.ChatBotResponse(menssage, status, UserId, systemID);
 
             if (!response.HasError)
             {
@@ -112,11 +116,11 @@ public partial class LoginPageViewModel : ObservableObject
                 return;
             }
 
-            await Application.Current!.MainPage!.DisplayAlert("Erro", "Senha ou e-mail incorretos", "Cancelar");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "Senha ou e-mail incorretos", "Cancelar");
         }
         catch (Exception ex)
         {
-            await Application.Current!.MainPage!.DisplayAlert("Erro", $"Falha no login: {ex.Message}", "Cancelar");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", $"Falha no login: {ex.Message}", "Cancelar");
         }
         finally
         {
@@ -137,7 +141,7 @@ public partial class LoginPageViewModel : ObservableObject
             if (status != BiometricHwStatus.Success)
                 return;
 
-            var desejaAtivar = await Application.Current!.MainPage!.DisplayAlert(
+            var desejaAtivar = await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Ativar biometria",
                 "Deseja usar biometria nos próximos acessos?",
                 "Sim",
@@ -206,14 +210,14 @@ public partial class LoginPageViewModel : ObservableObject
                 return;
             }
 
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 "Não foi possível autenticar com biometria.",
                 "OK");
         }
         catch (Exception ex)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 $"Falha na biometria: {ex.Message}",
                 "OK");

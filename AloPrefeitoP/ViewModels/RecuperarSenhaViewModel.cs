@@ -27,7 +27,7 @@ public partial class RecuperarSenhaViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Email))
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 "Informe o e-mail.",
                 "OK");
@@ -42,14 +42,14 @@ public partial class RecuperarSenhaViewModel : ObservableObject
 
             if (!string.IsNullOrWhiteSpace(response.ErrorMessage))
             {
-                await Application.Current!.MainPage!.DisplayAlert(
+                await Application.Current!.MainPage!.DisplayAlertAsync(
                     "Erro",
                     response.ErrorMessage,
                     "OK");
                 return;
             }
 
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Sucesso",
                 "Se o e-mail estiver cadastrado, o processo de redefinição foi iniciado.",
                 "OK");
@@ -59,7 +59,7 @@ public partial class RecuperarSenhaViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 $"Falha ao solicitar recuperação: {ex.Message}",
                 "OK");

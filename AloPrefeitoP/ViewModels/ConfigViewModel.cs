@@ -21,7 +21,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task Sobre()
         {
-            await Shell.Current.DisplayAlert(
+            await Shell.Current.DisplayAlertAsync(
                 "Sobre",
                 "Alô Prefeito - versão 1.0",
                 "OK");
@@ -30,7 +30,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task Suporte()
         {
-            await Shell.Current.DisplayAlert(
+            await Shell.Current.DisplayAlertAsync(
                 "Suporte",
                 "Nosso canal de suporte será disponibilizado em breve.",
                 "OK");
@@ -39,7 +39,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task Sair()
         {
-            bool confirmar = await Shell.Current.DisplayAlert(
+            bool confirmar = await Shell.Current.DisplayAlertAsync(
                 "Sair da conta",
                 "Deseja realmente sair da sua conta?",
                 "Sim",

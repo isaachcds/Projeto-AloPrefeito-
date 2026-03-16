@@ -19,6 +19,7 @@ public partial class LoginPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+      
         if (_jaInicializou)
             return;
         _jaInicializou = true;
