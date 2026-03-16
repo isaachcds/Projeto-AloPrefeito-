@@ -100,7 +100,7 @@ namespace AloPrefeitoP.ViewModels
             if (chat == null)
                 return;
 
-            var acao = await Shell.Current.DisplayActionSheet(
+            var acao = await Shell.Current.DisplayActionSheetAsync(
                 "Conversa",
                 "Cancelar",
                 null,
@@ -114,7 +114,7 @@ namespace AloPrefeitoP.ViewModels
                     break;
 
                 case "Excluir":
-                    var confirmar = await Shell.Current.DisplayAlert(
+                    var confirmar = await Shell.Current.DisplayAlertAsync(
                         "Excluir conversa",
                         "Deseja realmente excluir esta conversa?",
                         "Excluir",

@@ -100,6 +100,10 @@ public partial class LoginPageViewModel : ObservableObject
 
             var response = await _apiServices.Login(Email, Senha);
 
+            string menssage = "oi"; string status = "021"; int UserId = 5; string systemID = "017";
+            var te = _apiServices.GetModuloAgent(UserId);
+            var teste = _apiServices.ChatBotResponse(menssage, status, UserId, systemID);
+
             if (!response.HasError)
             {
                 Preferences.Set("usuarioemail", Email);

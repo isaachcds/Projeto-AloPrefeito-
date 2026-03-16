@@ -538,7 +538,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task ConfirmarLogoff()
         {
-            bool confirmar = await Application.Current.MainPage.DisplayAlert(
+            bool confirmar = await Application.Current.MainPage.DisplayAlertAsync(
                 "Sair",
                 "Deseja realmente sair da sua conta?",
                 "Sim",
