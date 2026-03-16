@@ -125,7 +125,7 @@
                         </Grid>
                     </Border>
 
-                    <!--  Nosso Suporte  -->
+                    <!--  Nosso suporte  -->
                     <Border
                         BackgroundColor="#F4F4F4"
                         HeightRequest="44"

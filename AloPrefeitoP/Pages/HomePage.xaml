@@ -521,7 +521,7 @@
         <!--  MENU  -->
         <Grid
             x:Name="MenuLateral"
-            BackgroundColor="#F5F5F7"
+            BackgroundColor="#b6dbe9"
             HorizontalOptions="Start"
             TranslationX="-320"
             WidthRequest="320"
@@ -546,10 +546,15 @@
 
                 <dx:DXButton
                     Grid.Row="1"
+                    HorizontalContentAlignment="Start"
+                    BackgroundColor="#FFFFFF"
                     ButtonType="Accent"
                     Command="{Binding NovoChatCommand}"
                     Content="Novo chat"
-                    HeightRequest="50" />
+                    Icon="edit_icon.png"
+                    IconColor="Black"
+                    IconPlacement="Left"
+                    TextColor="Black" />
 
                 <dx:DXBorder
                     Grid.Row="2"
@@ -665,7 +670,8 @@
                         Command="{Binding IrParaHistoricoCommand}"
                         Content="Ver mais"
                         HorizontalOptions="End"
-                        IsVisible="{Binding TemMaisDeTresChats}" />
+                        IsVisible="{Binding TemMaisDeTresChats}"
+                        TextColor="Black" />
                 </Grid>
 
                 <Grid
@@ -681,9 +687,11 @@
                         Content="Configurações"
                         HorizontalOptions="Start"
                         Icon="settings_icon.svg"
+                        IconColor="Black"
                         IconHeight="18"
                         IconIndent="10"
-                        IconWidth="18" />
+                        IconWidth="18"
+                        TextColor="Black" />
 
                     <dx:DXButton
                         Grid.Column="1"
@@ -692,6 +700,7 @@
                         HeightRequest="44"
                         HorizontalOptions="End"
                         Icon="logoff_icon.svg"
+                        IconColor="Black"
                         IconHeight="18"
                         IconWidth="18"
                         ShowContent="False"

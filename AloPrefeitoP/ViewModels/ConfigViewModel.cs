@@ -15,10 +15,7 @@ namespace AloPrefeitoP.ViewModels
         [RelayCommand]
         private async Task AlterarSenha()
         {
-            await Shell.Current.DisplayAlert(
-                "Alterar senha",
-                "Tela de alteração de senha será implementada em breve.",
-                "OK");
+            await Shell.Current.GoToAsync(nameof(AlterarSenhaPage));
         }
 
         [RelayCommand]

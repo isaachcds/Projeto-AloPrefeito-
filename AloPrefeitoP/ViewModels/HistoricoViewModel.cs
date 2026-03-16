@@ -72,6 +72,12 @@ namespace AloPrefeitoP.ViewModels
         }
 
         [RelayCommand]
+        private async Task Voltar()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+
+        [RelayCommand]
         private async Task NovoChat()
         {
             Preferences.Set("chat_atual", Guid.NewGuid().ToString("N"));
