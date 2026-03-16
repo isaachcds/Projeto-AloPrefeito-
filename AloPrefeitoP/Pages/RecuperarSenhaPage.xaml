@@ -4,22 +4,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
-    BackgroundColor="#F3F3F3"
-    Shell.NavBarIsVisible="False">
+    BackgroundColor="#F3F3F3">
 
     <Grid>
 
-        <!-- FUNDO -->
-        <Image
-            Source="iagestor360.jpeg"
-            Aspect="AspectFill" />
+        <!--  FUNDO  -->
+        <Image Aspect="AspectFill" Source="iagestor360.jpeg" />
 
         <ScrollView>
-            <VerticalStackLayout
-                Padding="30,24,30,30"
-                Spacing="16">
+            <VerticalStackLayout Padding="30,24,30,30" Spacing="16">
 
-                <!-- LOGO -->
+                <!--  LOGO  -->
                 <VerticalStackLayout
                     Margin="40,40,40,0"
                     HorizontalOptions="Center"
@@ -48,7 +43,7 @@
                     Text="Recuperar senha"
                     TextColor="Black" />
 
-                <!-- CARD -->
+                <!--  CARD  -->
                 <dx:DXBorder
                     Padding="18"
                     BackgroundColor="#F4F4F4"
@@ -65,17 +60,17 @@
                             <dx:DXBorder
                                 Padding="12,8"
                                 BackgroundColor="#EFEFEF"
-                                CornerRadius="8"
                                 BorderColor="#D6D6D6"
-                                BorderThickness="1">
+                                BorderThickness="1"
+                                CornerRadius="8">
 
                                 <Entry
+                                    BackgroundColor="Transparent"
                                     Keyboard="Email"
                                     Placeholder="seuemail@exemplo.com"
                                     PlaceholderColor="#8C8C8C"
                                     Text="{Binding Email}"
-                                    TextColor="#222222"
-                                    BackgroundColor="Transparent" />
+                                    TextColor="#222222" />
                             </dx:DXBorder>
                         </VerticalStackLayout>
 

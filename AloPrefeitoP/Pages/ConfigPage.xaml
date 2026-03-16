@@ -4,93 +4,212 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
-    Title="Configurações"
-    BackgroundColor="WhiteSmoke">
+    BackgroundImageSource="gestor_background.png">
 
-    <Grid
-        Padding="22"
-        RowDefinitions="Auto,*,Auto"
-        RowSpacing="18">
+    <Grid RowDefinitions="Auto,*,Auto">
 
         <!--  TOPO  -->
         <Grid
             Grid.Row="0"
-            ColumnDefinitions="Auto,*"
-            ColumnSpacing="12">
+            Padding="12,14,0,0"
+            HeightRequest="52">
 
             <dx:DXButton
-                Grid.Column="0"
+                Padding="0"
+                BackgroundColor="Transparent"
                 ButtonType="ToolButton"
                 Command="{Binding VoltarCommand}"
-                Content="←"
-                HeightRequest="44"
-                WidthRequest="44" />
-
-            <Label
-                Grid.Column="1"
-                FontAttributes="Bold"
-                FontSize="20"
-                Text="Configurações"
-                TextColor="#1B1B1B"
-                VerticalOptions="Center" />
+                Content=""
+                HeightRequest="30"
+                HorizontalOptions="Start"
+                Icon="arrow_left_icon.png"
+                IconColor="Black"
+                VerticalOptions="Start"
+                WidthRequest="30" />
         </Grid>
 
-        <!--  CONTEÚDO  -->
-        <VerticalStackLayout Grid.Row="1" Spacing="14">
+        <!--  CONTEÚDO CENTRAL  -->
+        <Grid Grid.Row="1">
+            <VerticalStackLayout
+                HorizontalOptions="Center"
+                Spacing="22"
+                TranslationY="-70"
+                VerticalOptions="Center">
 
-            <dx:DXButton
-                ButtonType="Filled"
-                Command="{Binding AlterarSenhaCommand}"
-                Content="Alterar senha"
-                HeightRequest="54"
-                HorizontalOptions="Fill"
-                Icon="password.svg"
-                IconHeight="20"
-                IconIndent="12"
-                IconWidth="20" />
+                <!--  TÍTULO  -->
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="Configurações"
+                    TextColor="Black" />
 
-            <dx:DXButton
-                ButtonType="Filled"
-                Command="{Binding SobreCommand}"
-                Content="Sobre"
-                HeightRequest="54"
-                HorizontalOptions="Fill"
-                Icon="info.svg"
-                IconHeight="20"
-                IconIndent="12"
-                IconWidth="20" />
+                <!--  BOTÕES  -->
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="16"
+                    WidthRequest="220">
 
-            <dx:DXButton
-                ButtonType="Filled"
-                Command="{Binding SuporteCommand}"
-                Content="Nosso suporte"
-                HeightRequest="54"
-                HorizontalOptions="Fill"
-                Icon="support.svg"
-                IconHeight="20"
-                IconIndent="12"
-                IconWidth="20"
-                TextHorizontalAlignment="Center" />
+                    <!--  Alterar senha  -->
+                    <Border
+                        BackgroundColor="#F4F4F4"
+                        HeightRequest="44"
+                        HorizontalOptions="Fill"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0">
 
-            <dx:DXButton
-                ButtonType="Outlined"
-                Command="{Binding SairCommand}"
-                Content="Sair da conta"
-                HeightRequest="54"
-                HorizontalOptions="Fill"
-                Icon="logoff.svg"
-                IconHeight="20"
-                IconIndent="12"
-                IconWidth="20" />
-        </VerticalStackLayout>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AlterarSenhaCommand}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid
+                            Padding="18,0,18,0"
+                            ColumnDefinitions="26,14,*"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center">
+
+                            <Image
+                                Grid.Column="0"
+                                HeightRequest="14"
+                                HorizontalOptions="Center"
+                                Source="cadeado_icon.svg"
+                                VerticalOptions="Center"
+                                WidthRequest="14" />
+
+                            <Label
+                                Grid.Column="2"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                HorizontalOptions="Start"
+                                Text="Alterar senha"
+                                TextColor="Black"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Sobre  -->
+                    <Border
+                        BackgroundColor="#F4F4F4"
+                        HeightRequest="44"
+                        HorizontalOptions="Fill"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SobreCommand}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid
+                            Padding="18,0,18,0"
+                            ColumnDefinitions="26,14,*"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center">
+
+                            <Image
+                                Grid.Column="0"
+                                HeightRequest="20"
+                                HorizontalOptions="Center"
+                                Source="about_icon.svg"
+                                VerticalOptions="Center"
+                                WidthRequest="20" />
+
+                            <Label
+                                Grid.Column="2"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                HorizontalOptions="Start"
+                                Text="Sobre"
+                                TextColor="Black"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Nosso Suporte  -->
+                    <Border
+                        BackgroundColor="#F4F4F4"
+                        HeightRequest="44"
+                        HorizontalOptions="Fill"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SuporteCommand}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid
+                            Padding="18,0,18,0"
+                            ColumnDefinitions="26,14,*"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center">
+
+                            <Image
+                                Grid.Column="0"
+                                HeightRequest="20"
+                                HorizontalOptions="Center"
+                                Source="support_icon.svg"
+                                VerticalOptions="Center"
+                                WidthRequest="20" />
+
+                            <Label
+                                Grid.Column="2"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                HorizontalOptions="Start"
+                                Text="Nosso Suporte"
+                                TextColor="Black"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Sair da conta  -->
+                    <Border
+                        BackgroundColor="#F4F4F4"
+                        HeightRequest="44"
+                        HorizontalOptions="Fill"
+                        StrokeShape="RoundRectangle 12"
+                        StrokeThickness="0">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SairCommand}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid
+                            Padding="18,0,18,0"
+                            ColumnDefinitions="26,14,*"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center">
+
+                            <Image
+                                Grid.Column="0"
+                                HeightRequest="20"
+                                HorizontalOptions="Center"
+                                Source="logoff_icon.svg"
+                                VerticalOptions="Center"
+                                WidthRequest="20" />
+
+                            <Label
+                                Grid.Column="2"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                HorizontalOptions="Start"
+                                Text="Sair da conta"
+                                TextColor="Black"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
 
         <!--  RODAPÉ  -->
         <Label
             Grid.Row="2"
-            FontSize="12"
+            Margin="0,0,0,12"
+            FontSize="11"
             HorizontalOptions="Center"
             Text="Versão 1.0"
-            TextColor="#6F6F6F" />
-
+            TextColor="#222222"
+            VerticalOptions="End" />
     </Grid>
 </ContentPage>

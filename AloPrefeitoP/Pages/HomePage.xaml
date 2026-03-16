@@ -10,13 +10,13 @@
 
     <Grid>
 
-        <!-- CONTEÚDO PRINCIPAL -->
+        <!--  CONTEÚDO PRINCIPAL  -->
         <Grid
             Padding="18,26,18,18"
             RowDefinitions="Auto,*,Auto"
             RowSpacing="18">
 
-            <!-- TOPO -->
+            <!--  TOPO  -->
             <dx:DXBorder
                 Grid.Row="0"
                 Padding="14,10"
@@ -24,13 +24,13 @@
                 CornerRadius="18">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
 
-                    <!-- MENU -->
+                    <!--  MENU  -->
                     <Grid
                         Grid.Column="0"
                         HeightRequest="36"
-                        WidthRequest="36"
                         HorizontalOptions="Start"
-                        VerticalOptions="Center">
+                        VerticalOptions="Center"
+                        WidthRequest="36">
                         <Label
                             FontSize="20"
                             HorizontalOptions="Center"
@@ -42,7 +42,7 @@
                         </Grid.GestureRecognizers>
                     </Grid>
 
-                    <!-- RESPOSTAS EM ÁUDIO -->
+                    <!--  RESPOSTAS EM ÁUDIO  -->
                     <dx:DXBorder
                         Grid.Column="1"
                         Padding="10,6"
@@ -51,8 +51,8 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center">
                         <HorizontalStackLayout
-                            Spacing="8"
                             HorizontalOptions="Center"
+                            Spacing="8"
                             VerticalOptions="Center">
 
                             <Image
@@ -77,7 +77,7 @@
                         </HorizontalStackLayout>
                     </dx:DXBorder>
 
-                    <!-- PERFIL -->
+                    <!--  PERFIL  -->
                     <dx:DXBorder
                         Grid.Column="2"
                         Padding="0"
@@ -103,22 +103,20 @@
                 </Grid>
             </dx:DXBorder>
 
-            <!-- ÁREA CENTRAL -->
+            <!--  ÁREA CENTRAL  -->
             <Grid
                 Grid.Row="1"
                 RowDefinitions="*,Auto,Auto"
                 RowSpacing="14">
 
-                <!-- ESTADO INICIAL -->
-                <Grid
-                    Grid.Row="0"
-                    IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}">
+                <!--  ESTADO INICIAL  -->
+                <Grid Grid.Row="0" IsVisible="{Binding TemMensagens, Converter={StaticResource InverseBoolConverter}}">
 
                     <VerticalStackLayout
                         x:Name="HeaderBoasVindas"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center"
-                        Spacing="6">
+                        Spacing="6"
+                        VerticalOptions="Center">
 
                         <Label
                             FontAttributes="Bold"
@@ -136,7 +134,7 @@
                     </VerticalStackLayout>
                 </Grid>
 
-                <!-- CHAT -->
+                <!--  CHAT  -->
                 <CollectionView
                     x:Name="ChatList"
                     Grid.Row="0"
@@ -164,7 +162,7 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <!-- IA DIGITANDO -->
+                <!--  IA DIGITANDO  -->
                 <dx:DXBorder
                     Grid.Row="1"
                     Padding="12,8"
@@ -178,7 +176,7 @@
                         TextColor="#6F6F6F" />
                 </dx:DXBorder>
 
-                <!-- TRANSCRIÇÃO -->
+                <!--  TRANSCRIÇÃO  -->
                 <dx:DXBorder
                     Grid.Row="2"
                     Padding="12,10"
@@ -193,7 +191,7 @@
                 </dx:DXBorder>
             </Grid>
 
-            <!-- BARRA INFERIOR -->
+            <!--  BARRA INFERIOR  -->
             <dx:DXBorder
                 Grid.Row="2"
                 Margin="6,0,6,6"
@@ -204,7 +202,7 @@
 
                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
 
-                    <!-- MODO NORMAL -->
+                    <!--  MODO NORMAL  -->
                     <Grid
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
@@ -221,12 +219,12 @@
                             VerticalOptions="Center" />
                     </Grid>
 
-                    <!-- MODO GRAVAÇÃO -->
+                    <!--  MODO GRAVAÇÃO  -->
                     <Grid
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
-                        IsVisible="{Binding EstaEscutando}"
                         ColumnDefinitions="*"
+                        IsVisible="{Binding EstaEscutando}"
                         VerticalOptions="Center">
 
                         <Grid
@@ -235,51 +233,243 @@
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
 
-                            <BoxView x:Name="Wave1"  Grid.Column="0"  WidthRequest="2" HeightRequest="10" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave2"  Grid.Column="1"  WidthRequest="2" HeightRequest="18" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave3"  Grid.Column="2"  WidthRequest="2" HeightRequest="12" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave4"  Grid.Column="3"  WidthRequest="2" HeightRequest="22" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave5"  Grid.Column="4"  WidthRequest="2" HeightRequest="9"  Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave6"  Grid.Column="5"  WidthRequest="2" HeightRequest="16" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave7"  Grid.Column="6"  WidthRequest="2" HeightRequest="11" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave8"  Grid.Column="7"  WidthRequest="2" HeightRequest="20" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave9"  Grid.Column="8"  WidthRequest="2" HeightRequest="10" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave10" Grid.Column="9"  WidthRequest="2" HeightRequest="17" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave11" Grid.Column="10" WidthRequest="2" HeightRequest="13" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave12" Grid.Column="11" WidthRequest="2" HeightRequest="19" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave13" Grid.Column="12" WidthRequest="2" HeightRequest="9"  Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave14" Grid.Column="13" WidthRequest="2" HeightRequest="15" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave15" Grid.Column="14" WidthRequest="2" HeightRequest="11" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave16" Grid.Column="15" WidthRequest="2" HeightRequest="21" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave17" Grid.Column="16" WidthRequest="2" HeightRequest="10" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave18" Grid.Column="17" WidthRequest="2" HeightRequest="18" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave19" Grid.Column="18" WidthRequest="2" HeightRequest="12" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave20" Grid.Column="19" WidthRequest="2" HeightRequest="22" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave21" Grid.Column="20" WidthRequest="2" HeightRequest="9"  Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave22" Grid.Column="21" WidthRequest="2" HeightRequest="16" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave23" Grid.Column="22" WidthRequest="2" HeightRequest="11" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-                            <BoxView x:Name="Wave24" Grid.Column="23" WidthRequest="2" HeightRequest="20" Color="#111111" CornerRadius="2" HorizontalOptions="Center" VerticalOptions="Center" />
-             
+                            <BoxView
+                                x:Name="Wave1"
+                                Grid.Column="0"
+                                CornerRadius="2"
+                                HeightRequest="10"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave2"
+                                Grid.Column="1"
+                                CornerRadius="2"
+                                HeightRequest="18"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave3"
+                                Grid.Column="2"
+                                CornerRadius="2"
+                                HeightRequest="12"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave4"
+                                Grid.Column="3"
+                                CornerRadius="2"
+                                HeightRequest="22"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave5"
+                                Grid.Column="4"
+                                CornerRadius="2"
+                                HeightRequest="9"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave6"
+                                Grid.Column="5"
+                                CornerRadius="2"
+                                HeightRequest="16"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave7"
+                                Grid.Column="6"
+                                CornerRadius="2"
+                                HeightRequest="11"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave8"
+                                Grid.Column="7"
+                                CornerRadius="2"
+                                HeightRequest="20"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave9"
+                                Grid.Column="8"
+                                CornerRadius="2"
+                                HeightRequest="10"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave10"
+                                Grid.Column="9"
+                                CornerRadius="2"
+                                HeightRequest="17"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave11"
+                                Grid.Column="10"
+                                CornerRadius="2"
+                                HeightRequest="13"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave12"
+                                Grid.Column="11"
+                                CornerRadius="2"
+                                HeightRequest="19"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave13"
+                                Grid.Column="12"
+                                CornerRadius="2"
+                                HeightRequest="9"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave14"
+                                Grid.Column="13"
+                                CornerRadius="2"
+                                HeightRequest="15"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave15"
+                                Grid.Column="14"
+                                CornerRadius="2"
+                                HeightRequest="11"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave16"
+                                Grid.Column="15"
+                                CornerRadius="2"
+                                HeightRequest="21"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave17"
+                                Grid.Column="16"
+                                CornerRadius="2"
+                                HeightRequest="10"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave18"
+                                Grid.Column="17"
+                                CornerRadius="2"
+                                HeightRequest="18"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave19"
+                                Grid.Column="18"
+                                CornerRadius="2"
+                                HeightRequest="12"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave20"
+                                Grid.Column="19"
+                                CornerRadius="2"
+                                HeightRequest="22"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave21"
+                                Grid.Column="20"
+                                CornerRadius="2"
+                                HeightRequest="9"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave22"
+                                Grid.Column="21"
+                                CornerRadius="2"
+                                HeightRequest="16"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave23"
+                                Grid.Column="22"
+                                CornerRadius="2"
+                                HeightRequest="11"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+                            <BoxView
+                                x:Name="Wave24"
+                                Grid.Column="23"
+                                CornerRadius="2"
+                                HeightRequest="20"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="2"
+                                Color="#111111" />
+
                         </Grid>
                     </Grid>
 
-                    <!-- MICROFONE -->
+                    <!--  MICROFONE  -->
                     <dx:DXBorder
                         Grid.Column="1"
                         Padding="0"
                         BackgroundColor="{Binding MicrofoneBackground}"
                         CornerRadius="15"
                         HeightRequest="30"
-                        WidthRequest="30"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center">
+                        VerticalOptions="Center"
+                        WidthRequest="30">
                         <Grid>
                             <Image
                                 HeightRequest="16"
-                                WidthRequest="16"
-                                Source="{Binding MicrofoneIcon}"
                                 HorizontalOptions="Center"
-                                VerticalOptions="Center" />
+                                Source="{Binding MicrofoneIcon}"
+                                VerticalOptions="Center"
+                                WidthRequest="16" />
 
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ToggleEscutaManualCommand}" />
@@ -287,24 +477,24 @@
                         </Grid>
                     </dx:DXBorder>
 
-                    <!-- ENVIAR -->
+                    <!--  ENVIAR  -->
                     <dx:DXBorder
                         Grid.Column="2"
                         Padding="0"
                         BackgroundColor="{Binding SendButtonBackground}"
                         CornerRadius="15"
                         HeightRequest="30"
-                        WidthRequest="30"
                         HorizontalOptions="Center"
+                        IsVisible="{Binding NaoEstaEscutando}"
                         VerticalOptions="Center"
-                        IsVisible="{Binding NaoEstaEscutando}">
+                        WidthRequest="30">
                         <Grid>
                             <Image
                                 HeightRequest="16"
-                                WidthRequest="16"
-                                Source="send_icon.svg"
                                 HorizontalOptions="Center"
-                                VerticalOptions="Center" />
+                                Source="send_icon.svg"
+                                VerticalOptions="Center"
+                                WidthRequest="16" />
 
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding EnviarTextoCommand}" />
@@ -316,7 +506,7 @@
             </dx:DXBorder>
         </Grid>
 
-        <!-- OVERLAY -->
+        <!--  OVERLAY  -->
         <Grid
             x:Name="OverlayMenu"
             BackgroundColor="#80000000"
@@ -328,7 +518,7 @@
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- MENU -->
+        <!--  MENU  -->
         <Grid
             x:Name="MenuLateral"
             BackgroundColor="#F5F5F7"
@@ -425,9 +615,7 @@
                             <DataTemplate x:DataType="models:ChatResumo">
                                 <Grid Margin="0,0,0,12">
                                     <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={x:Reference HomeRoot}, Path=BindingContext.AbrirChatCommand}"
-                                            CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding Source={x:Reference HomeRoot}, Path=BindingContext.AbrirChatCommand}" CommandParameter="{Binding .}" />
                                     </Grid.GestureRecognizers>
 
                                     <dx:DXBorder

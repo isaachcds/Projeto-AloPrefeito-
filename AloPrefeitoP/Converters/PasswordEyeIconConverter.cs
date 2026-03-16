@@ -9,7 +9,7 @@ public class PasswordEyeIconConverter : IValueConverter
         // SenhaVisivel = true -> mostra "olho_fechado" (ação: esconder)
         // SenhaVisivel = false -> mostra "olho" (ação: mostrar)
         var visivel = value is bool b && b;
-        return visivel ? "olho_fechado.png" : "olho.png";
+        return visivel ? "olho_fechado_icon.png" : "olho_icon.png";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

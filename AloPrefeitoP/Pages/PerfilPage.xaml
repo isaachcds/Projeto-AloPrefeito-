@@ -11,7 +11,7 @@
         <Grid Padding="22">
             <VerticalStackLayout Spacing="26">
 
-                <!-- TOPO -->
+                <!--  TOPO  -->
                 <Grid ColumnDefinitions="Auto,*">
                     <dx:DXButton
                         Grid.Column="0"
@@ -21,14 +21,10 @@
                         WidthRequest="44" />
                 </Grid>
 
-                <!-- FOTO + NOME -->
-                <VerticalStackLayout
-                    HorizontalOptions="Center"
-                    Spacing="10">
+                <!--  FOTO + NOME  -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
 
-                    <Grid
-                        HeightRequest="110"
-                        WidthRequest="110">
+                    <Grid HeightRequest="110" WidthRequest="110">
 
                         <Frame
                             Padding="0"
@@ -37,12 +33,10 @@
                             CornerRadius="55"
                             HasShadow="False"
                             HeightRequest="110"
-                            WidthRequest="110"
-                            IsClippedToBounds="True">
+                            IsClippedToBounds="True"
+                            WidthRequest="110">
 
-                            <Image
-                                Aspect="AspectFill"
-                                Source="{Binding FotoPerfil}" />
+                            <Image Aspect="AspectFill" Source="{Binding FotoPerfil}" />
                         </Frame>
 
                         <dx:DXBorder
@@ -57,7 +51,7 @@
                                 <Image
                                     HeightRequest="16"
                                     HorizontalOptions="Center"
-                                    Source="edit.svg"
+                                    Source="edit_icon.svg"
                                     VerticalOptions="Center"
                                     WidthRequest="16" />
 
@@ -81,14 +75,12 @@
                         TextColor="#1B1B1B" />
                 </VerticalStackLayout>
 
-                <!-- E-MAIL -->
+                <!--  E-MAIL  -->
                 <dx:DXBorder
                     Padding="16"
                     BackgroundColor="#8DC6E0"
                     CornerRadius="16">
-                    <Grid
-                        ColumnDefinitions="Auto,*,Auto"
-                        ColumnSpacing="14">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
 
                         <Label
                             Grid.Column="0"
@@ -114,7 +106,7 @@
                         <Image
                             Grid.Column="2"
                             HeightRequest="18"
-                            Source="edit.svg"
+                            Source="edit_icon.svg"
                             VerticalOptions="Center"
                             WidthRequest="18">
                             <Image.GestureRecognizers>
@@ -124,14 +116,12 @@
                     </Grid>
                 </dx:DXBorder>
 
-                <!-- TELEFONE -->
+                <!--  TELEFONE  -->
                 <dx:DXBorder
                     Padding="16"
                     BackgroundColor="#8DC6E0"
                     CornerRadius="16">
-                    <Grid
-                        ColumnDefinitions="Auto,*,Auto"
-                        ColumnSpacing="14">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
 
                         <Label
                             Grid.Column="0"
@@ -157,7 +147,7 @@
                         <Image
                             Grid.Column="2"
                             HeightRequest="18"
-                            Source="edit.svg"
+                            Source="edit_icon.svg"
                             VerticalOptions="Center"
                             WidthRequest="18">
                             <Image.GestureRecognizers>
@@ -167,14 +157,12 @@
                     </Grid>
                 </dx:DXBorder>
 
-                <!-- ENDEREÇO -->
+                <!--  ENDEREÇO  -->
                 <dx:DXBorder
                     Padding="16"
                     BackgroundColor="#8DC6E0"
                     CornerRadius="16">
-                    <Grid
-                        ColumnDefinitions="Auto,*,Auto"
-                        ColumnSpacing="14">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
 
                         <Label
                             Grid.Column="0"
@@ -200,7 +188,7 @@
                         <Image
                             Grid.Column="2"
                             HeightRequest="18"
-                            Source="edit.svg"
+                            Source="edit_icon.svg"
                             VerticalOptions="Center"
                             WidthRequest="18">
                             <Image.GestureRecognizers>
@@ -210,7 +198,7 @@
                     </Grid>
                 </dx:DXBorder>
 
-                <!-- BOTÃO VOLTAR -->
+                <!--  BOTÃO VOLTAR  -->
                 <dx:DXButton
                     ButtonType="Accent"
                     Command="{Binding VoltarCommand}"
