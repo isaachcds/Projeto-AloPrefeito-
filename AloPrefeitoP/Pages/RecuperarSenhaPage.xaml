@@ -4,100 +4,88 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:dx="http://schemas.devexpress.com/maui"
-    BackgroundColor="#F3F3F3">
+    BackgroundColor="White"
+    BackgroundImageSource="iagestor360_2.png"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False">
 
-    <Grid>
+    <Grid RowDefinitions="*,Auto">
 
-        <!--  FUNDO  -->
-        <Image Aspect="AspectFill" Source="iagestor360.jpeg" />
+        <VerticalStackLayout
+            Padding="34,0,34,-104"
+            HorizontalOptions="Center"
+            Spacing="10"
+            TranslationY="35"
+            VerticalOptions="Center">
 
-        <ScrollView>
-            <VerticalStackLayout Padding="30,24,30,30" Spacing="16">
+            <Label
+                FontAttributes="Bold"
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="Recuperar senha"
+                TextColor="Black" />
 
-                <!--  LOGO  -->
-                <VerticalStackLayout
-                    Margin="40,40,40,0"
-                    HorizontalOptions="Center"
-                    Spacing="4">
+            <dx:DXBorder
+                Padding="14"
+                BackgroundColor="#F4F4F4"
+                CornerRadius="10"
+                HorizontalOptions="Center"
+                WidthRequest="250">
 
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="46"
-                        HorizontalTextAlignment="Center"
-                        Text="IA Gestor"
-                        TextColor="#142A68" />
+                <VerticalStackLayout Spacing="10">
 
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="34"
-                        HorizontalTextAlignment="Center"
-                        Text="360"
-                        TextColor="#142A68" />
-                </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="3">
+                        <Label
+                            FontSize="12"
+                            Text="Email"
+                            TextColor="#2A2A2A" />
 
-                <Label
-                    Margin="0,14,0,8"
-                    FontAttributes="Bold"
-                    FontSize="18"
-                    HorizontalTextAlignment="Center"
-                    Text="Recuperar senha"
-                    TextColor="Black" />
+                        <dx:DXBorder
+                            Padding="10,5"
+                            BackgroundColor="#EFEFEF"
+                            BorderColor="#D6D6D6"
+                            BorderThickness="1"
+                            CornerRadius="6">
 
-                <!--  CARD  -->
-                <dx:DXBorder
-                    Padding="18"
-                    BackgroundColor="#F4F4F4"
-                    CornerRadius="10">
-
-                    <VerticalStackLayout Spacing="14">
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label
-                                FontSize="14"
-                                Text="Email"
-                                TextColor="#2A2A2A" />
-
-                            <dx:DXBorder
-                                Padding="12,8"
-                                BackgroundColor="#EFEFEF"
-                                BorderColor="#D6D6D6"
-                                BorderThickness="1"
-                                CornerRadius="8">
-
-                                <Entry
-                                    BackgroundColor="Transparent"
-                                    Keyboard="Email"
-                                    Placeholder="seuemail@exemplo.com"
-                                    PlaceholderColor="#8C8C8C"
-                                    Text="{Binding Email}"
-                                    TextColor="#222222" />
-                            </dx:DXBorder>
-                        </VerticalStackLayout>
-
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                            <Button
-                                Grid.Column="0"
+                            <Entry
                                 BackgroundColor="Transparent"
-                                BorderColor="#999999"
-                                BorderWidth="1"
-                                Command="{Binding CancelarCommand}"
-                                CornerRadius="8"
-                                HeightRequest="44"
-                                Text="Cancelar"
-                                TextColor="#333333" />
-
-                            <Button
-                                Grid.Column="1"
-                                BackgroundColor="#2F2F32"
-                                Command="{Binding EnviarCodigoCommand}"
-                                CornerRadius="8"
-                                HeightRequest="44"
-                                Text="Enviar Código"
-                                TextColor="White" />
-                        </Grid>
+                                FontSize="12"
+                                HeightRequest="34"
+                                Keyboard="Email"
+                                Placeholder="seuemail@exemplo.com"
+                                PlaceholderColor="#8C8C8C"
+                                Text="{Binding Email}"
+                                TextColor="#222222" />
+                        </dx:DXBorder>
                     </VerticalStackLayout>
-                </dx:DXBorder>
-            </VerticalStackLayout>
-        </ScrollView>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Button
+                            Grid.Column="0"
+                            BackgroundColor="Transparent"
+                            BorderColor="#999999"
+                            BorderWidth="1"
+                            Command="{Binding CancelarCommand}"
+                            CornerRadius="6"
+                            FontSize="12"
+                            HeightRequest="36"
+                            Text="Cancelar"
+                            TextColor="#333333" />
+
+                        <Button
+                            Grid.Column="1"
+                            BackgroundColor="#2F2F32"
+                            Command="{Binding EnviarCodigoCommand}"
+                            CornerRadius="6"
+                            FontSize="12"
+                            HeightRequest="36"
+                            Text="Enviar Código"
+                            TextColor="White" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </dx:DXBorder>
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

@@ -1,4 +1,5 @@
-﻿using AloPrefeitoP.Services;
+﻿using AloPrefeitoP.Pages;
+using AloPrefeitoP.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -43,9 +44,10 @@ public partial class AlterarSenhaViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task Voltar()
+    private Task Voltar()
     {
-        await Application.Current!.MainPage!.Navigation.PopAsync();
+        Application.Current!.MainPage = new RecuperarSenhaPage(_apiServices);
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -56,28 +58,19 @@ public partial class AlterarSenhaViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(NovaSenha))
         {
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Erro",
-                "Informe a nova senha.",
-                "OK");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "Informe a nova senha.", "OK");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(ConfirmarSenha))
         {
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Erro",
-                "Confirme a nova senha.",
-                "OK");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "Confirme a senha.", "OK");
             return;
         }
 
         if (NovaSenha != ConfirmarSenha)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Erro",
-                "As senhas não conferem.",
-                "OK");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "As senhas não coincidem.", "OK");
             return;
         }
 
@@ -85,23 +78,19 @@ public partial class AlterarSenhaViewModel : ObservableObject
         {
             IsBusy = true;
 
-            // SUBSTITUIR PELO ENDPOINT REAL DE ALTERAÇÃO DE SENHA
-            // Exemplo:
-            // var response = await _apiServices.AlterarSenha(_email, NovaSenha);
+            // sua lógica real
+            // await _apiServices.AlterarSenha(_email, NovaSenha);
 
-            // Enquanto o endpoint final não foi passado:
-            await Task.Delay(500);
-
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Sucesso",
                 "Senha alterada com sucesso.",
                 "OK");
 
-            await Application.Current!.MainPage!.Navigation.PopToRootAsync();
+            Application.Current!.MainPage = new LoginPage(_apiServices);
         }
         catch (Exception ex)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
                 $"Falha ao alterar senha: {ex.Message}",
                 "OK");

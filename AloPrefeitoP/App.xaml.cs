@@ -14,6 +14,7 @@ namespace AloPrefeitoP
             Application.Current.UserAppTheme = AppTheme.Light;
             var vm = new LoginPageViewModel(apiServices);
             var page = new LoginPage( _services);
+            NavigationPage.SetHasNavigationBar(page, false);
             MainPage = new NavigationPage(page);
         }
     }

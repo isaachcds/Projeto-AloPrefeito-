@@ -8,6 +8,7 @@ public partial class RecuperarSenhaPage : ContentPage
     public RecuperarSenhaPage(ApiServices apiServices)
     {
         InitializeComponent();
+        NavigationPage.SetHasNavigationBar(this, false);
         BindingContext = new RecuperarSenhaViewModel(apiServices);
     }
 }

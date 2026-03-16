@@ -21,16 +21,21 @@ public partial class RecuperarSenhaViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private Task Cancelar()
+    {
+        Application.Current!.MainPage = new LoginPage(_apiServices);
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     private async Task EnviarCodigo()
     {
-        if (IsBusy) return;
+        if (IsBusy)
+            return;
 
         if (string.IsNullOrWhiteSpace(Email))
         {
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Erro",
-                "Informe o e-mail.",
-                "OK");
+            await Application.Current!.MainPage!.DisplayAlertAsync("Erro", "Informe o email.", "OK");
             return;
         }
 
@@ -38,41 +43,21 @@ public partial class RecuperarSenhaViewModel : ObservableObject
         {
             IsBusy = true;
 
-            var response = await _apiServices.ResetPassWord(Email);
+            // sua lógica real aqui
+            // await _apiServices.RecuperarSenha(Email);
 
-            if (!string.IsNullOrWhiteSpace(response.ErrorMessage))
-            {
-                await Application.Current!.MainPage!.DisplayAlert(
-                    "Erro",
-                    response.ErrorMessage,
-                    "OK");
-                return;
-            }
-
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Sucesso",
-                "Se o e-mail estiver cadastrado, o processo de redefinição foi iniciado.",
-                "OK");
-
-            await Application.Current!.MainPage!.Navigation.PushAsync(
-                new AlterarSenhaPage(_apiServices, Email));
+            Application.Current!.MainPage = new AlterarSenhaPage(_apiServices, Email);
         }
         catch (Exception ex)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
+            await Application.Current!.MainPage!.DisplayAlertAsync(
                 "Erro",
-                $"Falha ao solicitar recuperação: {ex.Message}",
+                $"Falha ao enviar código: {ex.Message}",
                 "OK");
         }
         finally
         {
             IsBusy = false;
         }
-    }
-
-    [RelayCommand]
-    private async Task Cancelar()
-    {
-        await Application.Current!.MainPage!.Navigation.PopAsync();
     }
 }
