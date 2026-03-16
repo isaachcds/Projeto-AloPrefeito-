@@ -53,6 +53,12 @@ namespace AloPrefeitoP.ViewModels
         [ObservableProperty]
         private ObservableCollection<ChatResumo> chats = new();
 
+        [ObservableProperty]
+        private bool habilitarFaceId;
+
+        [ObservableProperty]
+        private bool habilitarBiometria;
+
         public string Nome => Preferences.Get("usuarionome", string.Empty);
 
         public bool NaoEstaEscutando => !EstaEscutando;

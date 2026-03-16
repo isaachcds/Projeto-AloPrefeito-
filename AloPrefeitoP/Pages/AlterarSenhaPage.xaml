@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AloPrefeitoP.Pages.AlterarSenhaPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dx="http://schemas.devexpress.com/maui"
+    BackgroundColor="#F3F3F3"
+    Shell.NavBarIsVisible="False">
+
+    <Grid>
+
+        <!-- FUNDO -->
+        <Image
+            Source="iagestor360.jpeg"
+            Aspect="AspectFill" />
+
+        <ScrollView>
+            <VerticalStackLayout
+                Padding="30,24,30,30"
+                Spacing="16">
+
+                <!-- TOPO -->
+                <Grid ColumnDefinitions="Auto,*">
+                    <dx:DXButton
+                        Grid.Column="0"
+                        ButtonType="ToolButton"
+                        Command="{Binding VoltarCommand}"
+                        HeightRequest="44"
+                        WidthRequest="44"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start" />
+                </Grid>
+
+                <!-- LOGO / TÍTULO -->
+                <VerticalStackLayout
+                    Margin="0,0,0,0"
+                    HorizontalOptions="Center"
+                    Spacing="4">
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="46"
+                        HorizontalTextAlignment="Center"
+                        Text="IA Gestor"
+                        TextColor="#142A68" />
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="34"
+                        HorizontalTextAlignment="Center"
+                        Text="360"
+                        TextColor="#142A68" />
+                </VerticalStackLayout>
+
+                <Label
+                    Margin="0,14,0,8"
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    HorizontalTextAlignment="Center"
+                    Text="Alterar senha"
+                    TextColor="Black" />
+
+                <!-- CARD -->
+                <dx:DXBorder
+                    Padding="18"
+                    BackgroundColor="#F4F4F4"
+                    CornerRadius="10">
+
+                    <VerticalStackLayout Spacing="14">
+
+                        <!-- NOVA SENHA -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label
+                                FontSize="14"
+                                Text="Nova senha:"
+                                TextColor="#2A2A2A" />
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <dx:DXBorder
+                                    Grid.ColumnSpan="2"
+                                    Padding="12,8"
+                                    BackgroundColor="#EFEFEF"
+                                    CornerRadius="8"
+                                    BorderColor="#D6D6D6"
+                                    BorderThickness="1">
+
+                                    <Entry
+                                        Margin="0,0,34,0"
+                                        BackgroundColor="Transparent"
+                                        IsPassword="{Binding NovaSenhaVisivel, Converter={StaticResource InverseBoolConverter}}"
+                                        Placeholder="Digite sua nova senha"
+                                        PlaceholderColor="#8C8C8C"
+                                        Text="{Binding NovaSenha}"
+                                        TextColor="#222222" />
+                                </dx:DXBorder>
+
+                                <ImageButton
+                                    Grid.Column="1"
+                                    Margin="0,0,10,0"
+                                    Padding="0"
+                                    BackgroundColor="Transparent"
+                                    Command="{Binding AlternarNovaSenhaCommand}"
+                                    HeightRequest="22"
+                                    HorizontalOptions="End"
+                                    Source="{Binding NovaSenhaVisivel, Converter={StaticResource PasswordEyeIconConverter}}"
+                                    VerticalOptions="Center"
+                                    WidthRequest="22" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <!-- CONFIRMAR SENHA -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label
+                                FontSize="14"
+                                Text="Confirme a senha:"
+                                TextColor="#2A2A2A" />
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <dx:DXBorder
+                                    Grid.ColumnSpan="2"
+                                    Padding="12,8"
+                                    BackgroundColor="#EFEFEF"
+                                    CornerRadius="8"
+                                    BorderColor="#D6D6D6"
+                                    BorderThickness="1">
+
+                                    <Entry
+                                        Margin="0,0,34,0"
+                                        BackgroundColor="Transparent"
+                                        IsPassword="{Binding ConfirmarSenhaVisivel, Converter={StaticResource InverseBoolConverter}}"
+                                        Placeholder="Confirme sua senha"
+                                        PlaceholderColor="#8C8C8C"
+                                        Text="{Binding ConfirmarSenha}"
+                                        TextColor="#222222" />
+                                </dx:DXBorder>
+
+                                <ImageButton
+                                    Grid.Column="1"
+                                    Margin="0,0,10,0"
+                                    Padding="0"
+                                    BackgroundColor="Transparent"
+                                    Command="{Binding AlternarConfirmarSenhaCommand}"
+                                    HeightRequest="22"
+                                    HorizontalOptions="End"
+                                    Source="{Binding ConfirmarSenhaVisivel, Converter={StaticResource PasswordEyeIconConverter}}"
+                                    VerticalOptions="Center"
+                                    WidthRequest="22" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <Button
+                            Margin="0,6,0,0"
+                            BackgroundColor="#2F2F32"
+                            Command="{Binding SalvarCommand}"
+                            CornerRadius="8"
+                            HeightRequest="46"
+                            Text="Salvar"
+                            TextColor="White" />
+
+                    </VerticalStackLayout>
+                </dx:DXBorder>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

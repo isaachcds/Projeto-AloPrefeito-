@@ -15,6 +15,7 @@ namespace AloPrefeitoP
             Routing.RegisterRoute(nameof(HistoricoPage), typeof(HistoricoPage));
             Routing.RegisterRoute(nameof(ConfigPage), typeof(ConfigPage));
             Routing.RegisterRoute(nameof(PerfilPage), typeof(PerfilPage));
+            Routing.RegisterRoute(nameof(AlterarSenhaPage), typeof(AlterarSenhaPage));
         }
     }
 }
