@@ -172,7 +172,7 @@
                     IsVisible="{Binding IaEstaDigitando}">
                     <Label
                         FontSize="13"
-                        Text="Alô Prefeito está digitando..."
+                        Text="IA Gestor está digitando..."
                         TextColor="#6F6F6F" />
                 </dx:DXBorder>
 
