@@ -65,17 +65,17 @@
 
                         <Grid
                             Padding="18,0,18,0"
-                            ColumnDefinitions="26,14,*"
+                            ColumnDefinitions="Auto,14,*"
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
 
                             <Image
                                 Grid.Column="0"
-                                HeightRequest="20"
+                                HeightRequest="24"
                                 HorizontalOptions="Center"
                                 Source="cadeado_icon.svg"
                                 VerticalOptions="Center"
-                                WidthRequest="20" />
+                                WidthRequest="24" />
 
                             <Label
                                 Grid.Column="2"
@@ -102,17 +102,17 @@
 
                         <Grid
                             Padding="18,0,18,0"
-                            ColumnDefinitions="26,14,*"
+                            ColumnDefinitions="Auto,14,*"
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
 
                             <Image
                                 Grid.Column="0"
-                                HeightRequest="20"
+                                HeightRequest="24"
                                 HorizontalOptions="Center"
                                 Source="about_icon.svg"
                                 VerticalOptions="Center"
-                                WidthRequest="20" />
+                                WidthRequest="24" />
 
                             <Label
                                 Grid.Column="2"
@@ -139,17 +139,17 @@
 
                         <Grid
                             Padding="18,0,18,0"
-                            ColumnDefinitions="26,14,*"
+                            ColumnDefinitions="Auto,14,*"
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
 
                             <Image
                                 Grid.Column="0"
-                                HeightRequest="20"
+                                HeightRequest="24"
                                 HorizontalOptions="Center"
                                 Source="support_icon.svg"
                                 VerticalOptions="Center"
-                                WidthRequest="20" />
+                                WidthRequest="24" />
 
                             <Label
                                 Grid.Column="2"
@@ -176,17 +176,17 @@
 
                         <Grid
                             Padding="18,0,18,0"
-                            ColumnDefinitions="26,14,*"
+                            ColumnDefinitions="Auto,14,*"
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
 
                             <Image
                                 Grid.Column="0"
-                                HeightRequest="20"
+                                HeightRequest="24"
                                 HorizontalOptions="Center"
                                 Source="logoff_icon.svg"
                                 VerticalOptions="Center"
-                                WidthRequest="20" />
+                                WidthRequest="24" />
 
                             <Label
                                 Grid.Column="2"
