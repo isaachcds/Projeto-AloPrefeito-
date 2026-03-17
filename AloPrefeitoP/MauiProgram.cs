@@ -7,6 +7,11 @@ using Microsoft.Extensions.Logging;
 using Plugin.Maui.Biometric;
 using ScheduleListUI.Services;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using Microsoft.Maui.Handlers;
+
+#if ANDROID
+using Android.Content.Res;
+#endif
 
 namespace AloPrefeitoP
 {
@@ -28,28 +33,43 @@ namespace AloPrefeitoP
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            EntryHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+            {
+#if ANDROID
+                handler.PlatformView.BackgroundTintList =
+                    ColorStateList.ValueOf(global::Android.Graphics.Color.Transparent);
+
+                handler.PlatformView.SetBackgroundColor(global::Android.Graphics.Color.Transparent);
+#endif
+            });
 
             builder.Services.AddSingleton<IBiometric>(BiometricAuthenticationService.Default);
 
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
             builder.Services.AddSingleton<ISQLiteDbServive, SQLiteDbServive>();
             builder.Services.AddHttpClient<ApiServices>();
+
             builder.Services.AddTransient<LoginPageViewModel>();
             builder.Services.AddTransient<LoginPage>();
+
             builder.Services.AddTransient<HistoricoViewModel>();
             builder.Services.AddTransient<HistoricoPage>();
+
             builder.Services.AddTransient<HomePageViewModel>();
             builder.Services.AddTransient<HomePage>();
+
             builder.Services.AddTransient<BuscaChatsPage>();
             builder.Services.AddTransient<BuscaChatsViewModel>();
+
             builder.Services.AddTransient<ConfigPage>();
             builder.Services.AddTransient<ConfigViewModel>();
-            builder.Services.AddTransient<HistoricoPage>();
-            builder.Services.AddTransient<HistoricoViewModel>();
+
             builder.Services.AddTransient<PerfilViewModel>();
             builder.Services.AddTransient<PerfilPage>();
+
             return builder.Build();
         }
     }

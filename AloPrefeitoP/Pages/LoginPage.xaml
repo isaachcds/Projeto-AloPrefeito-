@@ -12,56 +12,63 @@
     <Grid RowDefinitions="*,Auto">
 
         <VerticalStackLayout
-            Padding="34,0,34,10"
+            Padding="30,0,30,0"
             HorizontalOptions="Center"
-            Spacing="10"
-            TranslationY="-18"
+            Spacing="14"
             VerticalOptions="End">
 
-            <Label
-                FontAttributes="Bold"
-                FontSize="14"
-                HorizontalOptions="Center"
-                HorizontalTextAlignment="Center"
-                Text="Acesse sua conta"
-                TextColor="Black" />
+            <!--  TEXTO SUPERIOR  -->
+            <VerticalStackLayout HorizontalOptions="Center">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="Acesse sua conta"
+                    TextColor="#111111" />
+            </VerticalStackLayout>
 
+            <!--  CARD LOGIN  -->
             <dx:DXBorder
-                Padding="14"
-                BackgroundColor="#F4F4F4"
-                CornerRadius="10"
+                Padding="16"
+                BackgroundColor="#F7F7F7"
+                CornerRadius="14"
                 HorizontalOptions="Center"
-                WidthRequest="250">
+                WidthRequest="285">
 
-                <VerticalStackLayout Spacing="10">
+                <VerticalStackLayout Spacing="12">
 
-                    <VerticalStackLayout Spacing="3">
+                    <!--  EMAIL  -->
+                    <VerticalStackLayout Spacing="4">
                         <Label
+                            FontAttributes="Bold"
                             FontSize="12"
                             Text="Email"
                             TextColor="#2A2A2A" />
 
                         <dx:DXBorder
-                            Padding="10,5"
+                            Padding="12,6"
                             BackgroundColor="#EFEFEF"
-                            BorderColor="#D6D6D6"
+                            BorderColor="#D9D9D9"
                             BorderThickness="1"
-                            CornerRadius="6">
+                            CornerRadius="8">
 
                             <Entry
                                 BackgroundColor="Transparent"
-                                FontSize="12"
-                                HeightRequest="34"
+                                FontSize="13"
+                                HeightRequest="40"
                                 Keyboard="Email"
                                 Placeholder="seuemail@exemplo.com"
-                                PlaceholderColor="#8C8C8C"
+                                PlaceholderColor="#9A9A9A"
                                 Text="{Binding Email}"
                                 TextColor="#222222" />
                         </dx:DXBorder>
                     </VerticalStackLayout>
 
-                    <VerticalStackLayout Spacing="3">
+                    <!--  SENHA  -->
+                    <VerticalStackLayout Spacing="4">
                         <Label
+                            FontAttributes="Bold"
                             FontSize="12"
                             Text="Senha"
                             TextColor="#2A2A2A" />
@@ -69,121 +76,98 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <dx:DXBorder
                                 Grid.ColumnSpan="2"
-                                Padding="10,5"
+                                Padding="12,6"
                                 BackgroundColor="#EFEFEF"
-                                BorderColor="#D6D6D6"
+                                BorderColor="#D9D9D9"
                                 BorderThickness="1"
-                                CornerRadius="6">
+                                CornerRadius="8">
 
                                 <Entry
-                                    Margin="0,0,28,0"
+                                    Margin="0,0,34,0"
                                     BackgroundColor="Transparent"
-                                    FontSize="12"
-                                    HeightRequest="34"
+                                    FontSize="13"
+                                    HeightRequest="40"
                                     IsPassword="{Binding SenhaVisivel, Converter={StaticResource InverseBoolConverter}}"
                                     Placeholder="Digite sua senha"
-                                    PlaceholderColor="#8C8C8C"
+                                    PlaceholderColor="#9A9A9A"
                                     Text="{Binding Senha}"
                                     TextColor="#222222" />
                             </dx:DXBorder>
 
-                            <ImageButton
+                            <Image
                                 Grid.Column="1"
-                                Margin="0,0,8,0"
-                                Padding="0"
-                                BackgroundColor="Transparent"
-                                Command="{Binding AlternarSenhaCommand}"
-                                HeightRequest="5"
+                                Margin="0,0,12,0"
+                                HeightRequest="18"
                                 HorizontalOptions="End"
                                 Source="{Binding SenhaVisivel, Converter={StaticResource PasswordEyeIconConverter}}"
                                 VerticalOptions="Center"
-                                WidthRequest="5" />
+                                WidthRequest="18">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding AlternarSenhaCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
                         </Grid>
                     </VerticalStackLayout>
 
+                    <!--  BOTÃO ENTRAR  -->
                     <Button
-                        Margin="0,4,0,0"
-                        BackgroundColor="#2F2F32"
+                        Margin="0,6,0,0"
+                        BackgroundColor="#0D2E63"
                         Command="{Binding LoginCommand}"
-                        CornerRadius="6"
-                        FontSize="12"
-                        HeightRequest="38"
+                        CornerRadius="8"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        HeightRequest="44"
                         Text="Entrar"
                         TextColor="White" />
 
+                    <!--  ESQUECI SENHA  -->
                     <Button
                         Padding="0"
                         BackgroundColor="Transparent"
                         BorderWidth="0"
                         Command="{Binding IrParaRecuperarSenhaCommand}"
+                        FontAttributes="Bold"
                         FontSize="11"
-                        HorizontalOptions="Start"
+                        HorizontalOptions="Center"
                         Text="Esqueci minha senha"
-                        TextColor="#2A2A2A" />
+                        TextColor="#4A4A4A" />
                 </VerticalStackLayout>
             </dx:DXBorder>
 
+            <!--  FACE ID  -->
             <Border
-                Padding="12,0,8,0"
-                BackgroundColor="#8CC9E8"
-                HeightRequest="30"
+                Padding="14,0,10,0"
+                BackgroundColor="#D5EFFB"
+                HeightRequest="38"
                 HorizontalOptions="Center"
                 StrokeThickness="0"
-                WidthRequest="250">
+                WidthRequest="285">
 
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="15" />
+                    <RoundRectangle CornerRadius="19" />
                 </Border.StrokeShape>
 
                 <Grid ColumnDefinitions="*,Auto">
                     <Label
                         Grid.Column="0"
+                        FontAttributes="Bold"
                         FontSize="11"
-                        Text="Habilitar FaceID"
-                        TextColor="Black"
+                        Text="Habilitar Face ID"
+                        TextColor="#13314D"
                         VerticalOptions="Center" />
 
                     <Switch
                         Grid.Column="1"
                         HorizontalOptions="End"
                         IsToggled="{Binding HabilitarFaceId}"
-                        OnColor="#111111"
-                        Scale="0.65"
-                        ThumbColor="Black"
+                        OnColor="#0D2E63"
+                        Scale="0.72"
+                        ThumbColor="White"
                         VerticalOptions="Center" />
                 </Grid>
             </Border>
 
-            <!--<Border
-                WidthRequest="250"
-                Padding="12,0,8,0"
-                BackgroundColor="#8CC9E8"
-                HeightRequest="30"
-                StrokeThickness="0"
-                HorizontalOptions="Center">
-
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="15" />
-                </Border.StrokeShape>
-
-                <Grid ColumnDefinitions="*,Auto">
-                    <Label
-                        Grid.Column="0"
-                        FontSize="11"
-                        Text="Habilitar Biometria"
-                        TextColor="Black"
-                        VerticalOptions="Center" />
-
-                    <Switch
-                        Grid.Column="1"
-                        HorizontalOptions="End"
-                        IsToggled="{Binding HabilitarBiometria}"
-                        OnColor="#111111"
-                        Scale="0.65"
-                        ThumbColor="Black"
-                        VerticalOptions="Center" />
-                </Grid>
-            </Border>-->
         </VerticalStackLayout>
     </Grid>
 </ContentPage>
