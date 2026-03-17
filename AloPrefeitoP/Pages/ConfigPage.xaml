@@ -71,11 +71,11 @@
 
                             <Image
                                 Grid.Column="0"
-                                HeightRequest="14"
+                                HeightRequest="20"
                                 HorizontalOptions="Center"
                                 Source="cadeado_icon.svg"
                                 VerticalOptions="Center"
-                                WidthRequest="14" />
+                                WidthRequest="20" />
 
                             <Label
                                 Grid.Column="2"

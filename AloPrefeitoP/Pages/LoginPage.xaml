@@ -93,11 +93,11 @@
                                 Padding="0"
                                 BackgroundColor="Transparent"
                                 Command="{Binding AlternarSenhaCommand}"
-                                HeightRequest="18"
+                                HeightRequest="5"
                                 HorizontalOptions="End"
                                 Source="{Binding SenhaVisivel, Converter={StaticResource PasswordEyeIconConverter}}"
                                 VerticalOptions="Center"
-                                WidthRequest="18" />
+                                WidthRequest="5" />
                         </Grid>
                     </VerticalStackLayout>
 

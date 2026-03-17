@@ -59,27 +59,19 @@ namespace AloPrefeitoP.ViewModels
         [ObservableProperty]
         private bool habilitarBiometria;
 
+   
+
+
         public string Nome => Preferences.Get("usuarionome", string.Empty);
-
         public bool NaoEstaEscutando => !EstaEscutando;
-
         public bool TemMensagens => ListaMensagens?.Count > 0;
-
         public bool TemMaisDeTresChats => _todosChats.Count > 3;
-
         public string AudioIcon => Fala ? "audio_icon.svg" : "audio_off_icon.svg";
-
-        public string MicrofoneIcon => EstaEscutando
-            ? "microphone_icon_white.svg"
-            : "microphone_icon.svg";
-
-        public Color MicrofoneBackground => EstaEscutando
-            ? Color.FromArgb("#5B63E6")
-            : Colors.Transparent;
-
-        public Color SendButtonBackground => string.IsNullOrWhiteSpace(MensagemDigitada)
-            ? Color.FromArgb("#A9C9D6")
-            : Color.FromArgb("#5B63E6");
+        public bool TemTextoDigitado => !string.IsNullOrWhiteSpace(MensagemDigitada);
+        public bool MostrarMicrofone => !EstaEscutando && !TemTextoDigitado;
+        public bool MostrarEnviarTexto => !EstaEscutando && TemTextoDigitado;
+        public bool MostrarEnviarAudio => EstaEscutando;
+        public Color AcaoChatBackground => Color.FromArgb("#8EC1D8");
 
         public HomePageViewModel(ApiServices apiServices, ISQLiteDbServive sQLiteDbServive)
         {
@@ -122,13 +114,16 @@ namespace AloPrefeitoP.ViewModels
         partial void OnEstaEscutandoChanged(bool value)
         {
             OnPropertyChanged(nameof(NaoEstaEscutando));
-            OnPropertyChanged(nameof(MicrofoneBackground));
-            OnPropertyChanged(nameof(MicrofoneIcon));
+            OnPropertyChanged(nameof(MostrarMicrofone));
+            OnPropertyChanged(nameof(MostrarEnviarTexto));
+            OnPropertyChanged(nameof(MostrarEnviarAudio));
         }
 
         partial void OnMensagemDigitadaChanged(string value)
         {
-            OnPropertyChanged(nameof(SendButtonBackground));
+            OnPropertyChanged(nameof(TemTextoDigitado));
+            OnPropertyChanged(nameof(MostrarMicrofone));
+            OnPropertyChanged(nameof(MostrarEnviarTexto));
         }
 
         partial void OnFalaChanged(bool value)
@@ -410,35 +405,42 @@ namespace AloPrefeitoP.ViewModels
             FecharMenu();
         }
 
+        private async Task ExecutarEscutaAsync(CancellationToken token)
+        {
+            try
+            {
+                await speechToText.StartListenAsync(
+                    new SpeechToTextOptions
+                    {
+                        Culture = CultureInfo.GetCultureInfo("pt-BR"),
+                        ShouldReportPartialResults = true
+                    },
+                    token);
+            }
+            catch (OperationCanceledException)
+            {
+                // cancelamento esperado quando o usuário envia o áudio
+            }
+            catch (Exception ex)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    FinalizarEscutaUI();
+                    TextoFalado = string.Empty;
+
+                    await Application.Current.MainPage.DisplayAlertAsync(
+                        "Erro no áudio",
+                        ex.Message,
+                        "OK");
+                });
+            }
+        }
+
         [RelayCommand]
-        private async Task ToggleEscutaManual()
+        private async Task IniciarEscuta()
         {
             if (EstaEscutando)
-            {
-                try
-                {
-                    await speechToText.StopListenAsync(CancellationToken.None);
-                }
-                catch
-                {
-                }
-
-                FinalizarEscutaUI();
-
-                var textoFinal = TextoFalado?.Trim();
-
-                if (string.IsNullOrWhiteSpace(textoFinal))
-                {
-                    TextoFalado = string.Empty;
-                    return;
-                }
-
-                _ultimaEntradaFoiPorVoz = true;
-                TextoFalado = string.Empty;
-
-                await EnviarMensagemFinalAsync(textoFinal);
                 return;
-            }
 
             if (_iaEstaFalando)
             {
@@ -472,31 +474,62 @@ namespace AloPrefeitoP.ViewModels
             }
 
             TextoFalado = string.Empty;
+            EstaEscutando = true;
+
+            _ = ExecutarEscutaAsync(cts.Token);
+        }
+
+        [RelayCommand]
+        private async Task EncerrarEEnviarAudio()
+        {
+            if (!EstaEscutando)
+                return;
 
             try
             {
-                EstaEscutando = true;
-
-                await speechToText.StartListenAsync(
-                    new SpeechToTextOptions
-                    {
-                        Culture = CultureInfo.GetCultureInfo("pt-BR"),
-                        ShouldReportPartialResults = true
-                    },
-                    cts.Token);
+                await speechToText.StopListenAsync(CancellationToken.None);
             }
             catch
             {
-                FinalizarEscutaUI();
-                TextoFalado = string.Empty;
             }
+
+            var textoFinal = TextoFalado?.Trim();
+
+            FinalizarEscutaUI();
+
+            if (string.IsNullOrWhiteSpace(textoFinal))
+            {
+                TextoFalado = string.Empty;
+                return;
+            }
+
+            _ultimaEntradaFoiPorVoz = true;
+            TextoFalado = string.Empty;
+
+            await EnviarMensagemFinalAsync(textoFinal);
         }
 
         private void FinalizarEscutaUI()
         {
             EstaEscutando = false;
 
-            cts?.Dispose();
+            try
+            {
+                if (cts is not null && !cts.IsCancellationRequested)
+                    cts.Cancel();
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                cts?.Dispose();
+            }
+            catch
+            {
+            }
+
             cts = null;
         }
 
