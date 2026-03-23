@@ -288,6 +288,26 @@ namespace AloPrefeitoP.ViewModels
                 if (string.IsNullOrWhiteSpace(resposta))
                     resposta = "Não consegui responder agora. Tente novamente.";
 
+                var msgBot = new Mensagens
+                {
+                    Nome = "Alô Prefeito",
+                    Mensagem = resposta,
+                    Data = DateTime.Now,
+                    ChatId = chatId,
+                    IsBot = true,
+                    UsuarioId = userId
+                };
+
+                await _db.AddMensagem(msgBot);
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    ListaMensagens.Add(msgBot);
+                    ScrollToBottomRequested?.Invoke();
+                });
+
+                await LoadHistoricoAsync();
+
                 if (Fala && _ultimaEntradaFoiPorVoz)
                 {
                     IEnumerable<Locale> locales = await TextToSpeech.Default.GetLocalesAsync();
@@ -321,26 +341,6 @@ namespace AloPrefeitoP.ViewModels
                         _iaEstaFalando = false;
                     }
                 }
-
-                var msgBot = new Mensagens
-                {
-                    Nome = "Alô Prefeito",
-                    Mensagem = resposta,
-                    Data = DateTime.Now,
-                    ChatId = chatId,
-                    IsBot = true,
-                    UsuarioId = userId
-                };
-
-                await _db.AddMensagem(msgBot);
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    ListaMensagens.Add(msgBot);
-                    ScrollToBottomRequested?.Invoke();
-                });
-
-                await LoadHistoricoAsync();
             }
             finally
             {
